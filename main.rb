@@ -17,8 +17,10 @@ CREAM = [255,240,210]
 BAKED = [255,210,140]
 BROWN = [230,70,70]
 GREEN = [0,255,0]
+DARKGREEN = [0,100,0]
 DARKMAGENTA = [139,0,139]
 DARKGRAY = [70,70,70]
+DARKGRAY2 = [80,80,80]
 DARKRED = [140,0,0]
 
 FRAME = 15
@@ -47,7 +49,7 @@ Font50 = Font.new(50)
 Font60 = Font.new(60)
 Font100 = Font.new(100)
 
-IMAGES = [:science, :production, :culture, :growth, :deck, :trash, :emblem, :greatperson, :authority, :stagnation, :sword, :arch]
+IMAGES = [:science, :production, :culture, :growth, :deck, :trash, :emblem, :greatperson, :authority, :stagnation, :sword]
 
 TECH_1 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
 TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:calendar,"暦"],[:religion,"宗教"],[:irrigation,"灌漑"]]
@@ -61,8 +63,11 @@ Window.height = 480
 Window.width = 640
 
 Image.register(:title, "./img/chichen-itza.jpg")
-IMAGES.each_with_index do |m,i|
+IMAGES.each do |m|
   Image.register(m, "./img/"+m.to_s+".png")
+end
+(TECH_1+TECH_2).each do |sym,name|
+  Image.register(sym,"./img/"+sym.to_s+".png")
 end
 
 Window.load_resources do

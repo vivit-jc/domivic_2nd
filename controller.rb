@@ -28,7 +28,7 @@ class Controller
     if(Input.key_push?(K_SPACE))
       case @game.status
       when :game
-        
+        @game.push_space
       end
     end
   end
@@ -46,10 +46,26 @@ class Controller
   end
 
   def pos_leftside
+    d_width = 0
+    d_height = 0
     [[170,70,:turn_end]].each do |width, height, sym|
-      return sym if(mcheck(LEFT_SIDE_X, BOTTOM_Y, LEFT_SIDE_X+width, BOTTOM_Y+height))
+      d_width += width
+      d_height += height
+      return sym if(mcheck(LEFT_SIDE_X, BOTTOM_Y, LEFT_SIDE_X+d_width, BOTTOM_Y+d_height))
     end
     return -1
+  end
+
+  def pos_bottom
+    d_width = 0
+    d_height = 0    
+    [[160,70,:tech_panel],[160,70,:const_panel]].each do |width, height, sym|
+      d_width += width
+      d_height += height
+      return sym if(mcheck(RIGHT_SIDE_WIDTH, BOTTOM_Y, RIGHT_SIDE_WIDTH+d_width, BOTTOM_Y+d_height))
+      d_width += 10
+      d_height += 10
+    end
   end
 
   def get_width(str)

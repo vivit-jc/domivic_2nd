@@ -10,8 +10,17 @@ class View
     @unitback.box_fill(0,0,60,60,DARKRED)
     @buttonback = Image.new(170,70)
     @buttonback.box_fill(0,0,170,70,YELLOW)
-    @bottom_panel_back = Image.new(160,70)
-    @bottom_panel_back.box_fill(0,0,160,70,DARKGRAY)
+    @tech_panel_back = Image.new(160,70)
+    @tech_panel_back.box_fill(0,0,160,70,DARKGRAY)
+    @const_panel_back = Image.new(160,70)
+    @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
+
+    @finish_tech_back = Image.new(60,60)
+    @finish_tech_back.box_fill(0,0,60,60,C_BLUE)
+    @unavailable_tech_back = Image.new(60,60)
+    @unavailable_tech_back.box_fill(0,0,60,60,DARKGRAY)
+    @available_tech_back = Image.new(60,60)
+    @available_tech_back.box_fill(0,0,60,60,DARKGREEN)
 
     @growth_gage = Image.new(100,10)
     @great_person_gage = Image.new(100,10)
@@ -45,15 +54,15 @@ class View
     if Input.mouse_push?( M_LBUTTON )
       refresh_gages
     end
-    draw_hand
-    draw_rightside
-    draw_leftside
-    draw_units
-    draw_bottom
-    draw_message(@game.messages)
-    case @game.game_status
-    when :main
-      p "test"
+    if @game.view_status == :tech_view
+      draw_tech_view
+    else
+      draw_hand
+      draw_rightside
+      draw_leftside
+      draw_units
+      draw_bottom
+      draw_message(@game.messages)
     end
 
   end
@@ -73,8 +82,8 @@ class View
   def draw_units
     array = [
       [:sword,"3/1"],
-      [:arch,"1/3"],
-      [:arch,"1/3"]
+      [:archery,"1/3"],
+      [:archery,"1/3"]
     ]
     array.each_with_index do |img,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
@@ -113,26 +122,35 @@ class View
   def draw_leftside
     Window.draw_font(LEFT_SIDE_X+20,5,"【太古】",Font28)
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
-    Window.draw_font(LEFT_SIDE_X,60,"時代スコア 4",Font20)
+    Window.draw_font(LEFT_SIDE_X,60,"時代スコア #{@game.era_score}",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
     Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK})
 
   end
 
   def draw_bottom
-    Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@bottom_panel_back)
+    make_bottom_panel(160,70,:tech_panel,@tech_panel_back)
+    Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,Image[:science])
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.research_pt}/15",Font16)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
     
-    Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@bottom_panel_back)
+    make_bottom_panel(160,70,:const_panel,@const_panel_back)
+    Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+5,Image[:production])
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,"#{@game.production_pt}/20",Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
   end
 
+  def draw_tech_view
+    TECH_6.each_with_index do |t,i|
+      Window.draw(10+i*60,10,@unavailable_tech_back)
+      Window.draw(10+i*60,10,Image[t[0]])
+
+    end
+  end
 
   def draw_message(str_array)
     str_array.each_with_index do |text, i|
@@ -158,6 +176,14 @@ class View
     @research_gage.clear
     @production_gage.clear
 
+  end
+
+  def make_bottom_panel(width,height,sym,image)
+    if @controller.pos_bottom == sym
+      image.box_fill(0,0,width,height,DARKGRAY2)
+    else
+      image.box_fill(0,0,width,height,DARKGRAY)
+    end
   end
 
   def draw_xy

@@ -4,12 +4,14 @@ class Game
 
 attr_accessor :status, :page
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
-  :great_person_num, :growth_pt, :research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product
+  :great_person_num, :growth_pt, :research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
+  :era_score, :view_status
 
   def initialize
     @status = :title
     @game_status = nil
     @game_status_memo = nil
+    @view_status = nil
 
     @messages = [""]
     @turn = 1
@@ -27,6 +29,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @research_pt = 0
     @culture_pt = 0
     @production_pt = 0
+
+    @era_score = 0
 
     calc_turn
 
@@ -103,6 +107,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def add_log(str)
     p str
+  end
+
+  def push_space
+    if @view_status == :tech_view
+      @view_status = :main_view
+    else
+      @view_status = :tech_view
+    end
   end
 
   def init_deck
