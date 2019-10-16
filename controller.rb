@@ -61,4 +61,5 @@ class Controller
   def mcheck(x1,y1,x2,y2)
     x1 < @mx && x2 > @mx && y1 < @my && y2 > @my    
   end
+
 end

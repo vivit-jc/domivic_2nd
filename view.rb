@@ -12,14 +12,11 @@ class View
     @buttonback.box_fill(0,0,170,70,YELLOW)
     @bottom_panel_back = Image.new(160,70)
     @bottom_panel_back.box_fill(0,0,160,70,DARKGRAY)
+
     @growth_gage = Image.new(100,10)
-    @growth_gage.box_fill(0,0,25,10,C_GREEN)
     @great_person_gage = Image.new(100,10)
-    @great_person_gage.box_fill(0,0,50,10,C_GREEN)
     @research_gage = Image.new(140,10)
-    @research_gage.box_fill(0,0,50,10,C_GREEN)
     @production_gage = Image.new(140,10)
-    @production_gage.box_fill(0,0,50,10,C_GREEN)
   end
 
   def draw
@@ -45,6 +42,9 @@ class View
   end
 
   def draw_game
+    if Input.mouse_push?( M_LBUTTON )
+      refresh_gages
+    end
     draw_hand
     draw_rightside
     draw_leftside
@@ -92,11 +92,11 @@ class View
     Window.draw_font(8,42,sprintf("% 2d",@game.deck.size),Font20)
     Window.draw_font(47,42,sprintf("% 2d",@game.trash.size),Font20)
     Window.draw(5,62,Image[:growth])
-    Window.draw_font(45,65,"Lv1",Font16)
-    Window.draw_font(45,83,"1/4",Font16)
+    Window.draw_font(45,65,"Lv#{@game.growth_level}",Font16)
+    Window.draw_font(45,83,"#{@game.growth_pt}/#{@game.growth_level*4-2}",Font16)
     Window.draw(5,100,@growth_gage)
     Window.draw(5,115,Image[:greatperson])
-    Window.draw_font(45,135,"5/10",Font16)
+    Window.draw_font(45,135,"#{@game.great_person_pt}/#{@game.great_person_num*20+20}",Font16)
     Window.draw(5,153,@great_person_gage)
 
     Window.draw_font(5,170,"属州 2",Font20)
@@ -106,13 +106,13 @@ class View
     Window.draw(5,240,Image[:emblem])
     Window.draw(42,240,Image[:culture])
     Window.draw_font(8,280,"02",Font20)
-    Window.draw_font(44,280,"100",Font20)
+    Window.draw_font(44,280,sprintf("% 2d",@game.culture_pt.to_s),Font20)
     
   end
 
   def draw_leftside
     Window.draw_font(LEFT_SIDE_X+20,5,"【太古】",Font28)
-    Window.draw_font(LEFT_SIDE_X,40,"ターン "+@game.turn+"/10",Font20)
+    Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
     Window.draw_font(LEFT_SIDE_X,60,"時代スコア 4",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
     Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK})
@@ -122,14 +122,14 @@ class View
   def draw_bottom
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@bottom_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,Image[:science])
-    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,"建築学",Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"2/15",Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.research_pt}/15",Font16)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
     
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@bottom_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+5,Image[:production])
-    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,"穀物庫",Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,"7/20",Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,"#{@game.production_pt}/20",Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
   end
 
@@ -138,6 +138,26 @@ class View
     str_array.each_with_index do |text, i|
       Window.draw_font(10, 480-MESSAGE_BOX_HEIGHT+i*22, text, Font20) 
     end
+  end
+
+  def selected_tech_j
+    return "技術を選択" unless @game.selected_tech
+    tech_list = TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6
+    return tech_list.find{|e|e[0] == @game.selected_tech}[1]
+  end
+
+  def selected_product_j
+    return "生産物を選択"
+  end
+
+  def refresh_gages
+    @growth_gage.box_fill(0,0,100,10,C_BLACK)
+    @growth_gage.box_fill(0,0,@game.growth_pt*100/(@game.growth_level*4-2),10,C_GREEN)
+    @great_person_gage.box_fill(0,0,100,10,C_BLACK)
+    @great_person_gage.box_fill(0,0,@game.great_person_pt*100/(@game.great_person_num*20+20),10,C_GREEN)
+    @research_gage.clear
+    @production_gage.clear
+
   end
 
   def draw_xy
