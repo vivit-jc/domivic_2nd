@@ -15,12 +15,12 @@ class View
     @const_panel_back = Image.new(160,70)
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
 
-    @finish_tech_back = Image.new(60,60)
-    @finish_tech_back.box_fill(0,0,60,60,C_BLUE)
-    @unavailable_tech_back = Image.new(60,60)
-    @unavailable_tech_back.box_fill(0,0,60,60,DARKGRAY)
-    @available_tech_back = Image.new(60,60)
-    @available_tech_back.box_fill(0,0,60,60,DARKGREEN)
+    @finish_tech_back = Image.new(40,40)
+    @finish_tech_back.box_fill(0,0,40,40,C_BLUE)
+    @unavailable_tech_back = Image.new(40,40)
+    @unavailable_tech_back.box_fill(0,0,40,40,DARKGRAY)
+    @available_tech_back = Image.new(40,40)
+    @available_tech_back.box_fill(0,0,40,40,DARKGREEN)
 
     @growth_gage = Image.new(100,10)
     @great_person_gage = Image.new(100,10)
@@ -131,9 +131,9 @@ class View
   def draw_bottom
     make_bottom_panel(160,70,:tech_panel,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@tech_panel_back)
-    Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,Image[:science])
+    Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,@game.selected_tech ? Image[@game.selected_tech] : Image[:science])
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.research_pt}/15",Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/15",Font16) if @game.selected_tech    
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
     
     make_bottom_panel(160,70,:const_panel,@const_panel_back)
@@ -145,10 +145,15 @@ class View
   end
 
   def draw_tech_view
-    TECH_6.each_with_index do |t,i|
-      Window.draw(10+i*60,10,@unavailable_tech_back)
-      Window.draw(10+i*60,10,Image[t[0]])
+    [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,i|
+      draw_tech_view_row(t,50+(i%2)*20,10+50*i)
+    end
+  end
 
+  def draw_tech_view_row(tech_array,x,y)
+    tech_array.each_with_index do |t,i|
+      Window.draw(x+i*50,y,@unavailable_tech_back)
+      Window.draw(x+i*50+4,y+4,Image[t[0]])
     end
   end
 
@@ -173,7 +178,10 @@ class View
     @growth_gage.box_fill(0,0,@game.growth_pt*100/(@game.growth_level*4-2),10,C_GREEN)
     @great_person_gage.box_fill(0,0,100,10,C_BLACK)
     @great_person_gage.box_fill(0,0,@game.great_person_pt*100/(@game.great_person_num*20+20),10,C_GREEN)
-    @research_gage.clear
+    if @game.selected_tech
+      @research_gage.box_fill(0,0,140,10,C_BLACK)
+      @research_gage.box_fill(0,0,(@game.tech_prog[@game.selected_tech]+@game.temp_research_pt)*140/15,10,C_GREEN)
+    end
     @production_gage.clear
 
   end

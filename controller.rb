@@ -35,6 +35,13 @@ class Controller
 
   def click_on_game
     @game.turn_end if pos_leftside == :turn_end
+    @game.view_status = :tech_view if pos_bottom == :tech_panel
+
+    # 技術選択画面で技術をクリックしたとき
+    if @game.view_status == :tech_view and pos_tech_view
+      @game.set_researching_tech(@game.get_tech_sym_from_xy(pos_tech_view))
+      @game.view_status = :main_view
+    end
   end
 
   def pos_title_menu
@@ -66,6 +73,15 @@ class Controller
       d_width += 10
       d_height += 10
     end
+  end
+
+  def pos_tech_view
+    [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,row|
+      t.size.times do |col|
+        return [5-row,col] if mcheck(50+(row%2)*20+col*50,10+50*row,90+(row%2)*20+col*50,50+50*row)
+      end
+    end
+    return false
   end
 
   def get_width(str)
