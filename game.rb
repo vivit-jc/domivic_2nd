@@ -1,6 +1,9 @@
 require_remote './card.rb'
+require_remote './tech.rb'
 
 class Game
+
+include Tech
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
@@ -11,7 +14,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @status = :title
     @game_status = nil
     @game_status_memo = nil
-    @view_status = nil
+    @view_status = :main_view
     @tech_array = [TECH_1,TECH_2,TECH_3,TECH_4,TECH_5,TECH_6]
     @tech_prog = {}
     (TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6).map{|e|e[0]}.each do |sym|
@@ -75,7 +78,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def calc_end_turn
     @tech_prog[@selected_tech] += @temp_research_pt
-    @temp_research_pt = 0
+    # 研究ポイントの溢れ処理
+    if tech_finished?(@selected_tech)
+      @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
+      @tech_prog[@selected_tech] = tech_cost(@selected_tech)
+      @selected_tech = nil
+    else
+      @temp_research_pt = 0
+    end
 
   end
 
@@ -111,14 +121,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @production_pt += sum_point(:production)
   end
 
-  def set_researching_tech(sym)
-    @selected_tech = sym
+  def selectable_turn_end?
+    return false unless @selected_tech
+    return true
   end
-
-  def get_tech_sym_from_xy(xy)
-    return @tech_array[xy[0]][xy[1]][0]
-  end
-
 
   def sum_point(kind)
     array = @hand.select{|e|e.kind == kind}.map{|e|e.num}

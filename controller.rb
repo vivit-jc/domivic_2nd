@@ -34,11 +34,24 @@ class Controller
   end
 
   def click_on_game
-    @game.turn_end if pos_leftside == :turn_end
-    @game.view_status = :tech_view if pos_bottom == :tech_panel
+    @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
+
+    
+    if @game.view_status == :main_view and pos_bottom == :tech_panel
+      @game.view_status = :tech_view
+      return
+    end
 
     # 技術選択画面で技術をクリックしたとき
     if @game.view_status == :tech_view and pos_tech_view
+      if pos_tech_view == :back
+        @game.view_status = :main_view
+        return
+      end
+      # 既に完了している技術は選べない
+      return false if @game.tech_finished?(@game.get_tech_sym_from_xy(pos_tech_view))
+      # まだ研究できない技術は選べない
+      return false unless @game.tech_selectable?(@game.get_tech_sym_from_xy(pos_tech_view))
       @game.set_researching_tech(@game.get_tech_sym_from_xy(pos_tech_view))
       @game.view_status = :main_view
     end
@@ -68,11 +81,10 @@ class Controller
     d_height = 0    
     [[160,70,:tech_panel],[160,70,:const_panel]].each do |width, height, sym|
       d_width += width
-      d_height += height
-      return sym if(mcheck(RIGHT_SIDE_WIDTH, BOTTOM_Y, RIGHT_SIDE_WIDTH+d_width, BOTTOM_Y+d_height))
+      return sym if(mcheck(RIGHT_SIDE_WIDTH, BOTTOM_Y, RIGHT_SIDE_WIDTH+d_width, BOTTOM_Y+height))
       d_width += 10
-      d_height += 10
     end
+    return false
   end
 
   def pos_tech_view
@@ -81,6 +93,7 @@ class Controller
         return [5-row,col] if mcheck(50+(row%2)*20+col*50,10+50*row,90+(row%2)*20+col*50,50+50*row)
       end
     end
+    return :back if mcheck(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+160,BOTTOM_Y+70)
     return false
   end
 

@@ -4,6 +4,8 @@ class View
     @game = game
     @controller = controller
 
+    @view_status_buff = nil
+
     @cardback = Image.new(60,60)
     @cardback.box_fill(0,0,60,60,DARKGRAY)
     @unitback = Image.new(60,60)
@@ -15,12 +17,12 @@ class View
     @const_panel_back = Image.new(160,70)
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
 
-    @finish_tech_back = Image.new(40,40)
-    @finish_tech_back.box_fill(0,0,40,40,C_BLUE)
-    @unavailable_tech_back = Image.new(40,40)
-    @unavailable_tech_back.box_fill(0,0,40,40,DARKGRAY)
-    @available_tech_back = Image.new(40,40)
-    @available_tech_back.box_fill(0,0,40,40,DARKGREEN)
+    @tech_back = {}
+    (TECH_1+TECH_2).map{|e|e[0]}.each do |e|
+      @tech_back[e] = Image.new(40,40)
+    end
+    @tech_view_back_button_back = Image.new(160,20)
+    @tech_view_back_button_back.box_fill(0,0,160,20,DARKGRAY)
 
     @growth_gage = Image.new(100,10)
     @great_person_gage = Image.new(100,10)
@@ -55,8 +57,11 @@ class View
       refresh_gages
     end
     if @game.view_status == :tech_view
+      refresh_tech_view if @view_status_buff != :tech_view
+      @view_status_buff = :tech_view
       draw_tech_view
     else
+      @view_status_buff = :main_view
       draw_hand
       draw_rightside
       draw_leftside
@@ -68,7 +73,6 @@ class View
   end
 
   def draw_hand
-
     @game.hand.each_with_index do |card,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
@@ -95,7 +99,6 @@ class View
   end
 
   def draw_rightside
-
     Window.draw(5,5,Image[:deck])
     Window.draw(44,5,Image[:trash])
     Window.draw_font(8,42,sprintf("% 2d",@game.deck.size),Font20)
@@ -124,7 +127,7 @@ class View
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
     Window.draw_font(LEFT_SIDE_X,60,"時代スコア #{@game.era_score}",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
-    Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK})
+    Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) if @game.selectable_turn_end?
 
   end
 
@@ -133,7 +136,7 @@ class View
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,@game.selected_tech ? Image[@game.selected_tech] : Image[:science])
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/15",Font16) if @game.selected_tech    
+    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/#{@game.tech_cost(@game.selected_tech)}",Font16) if @game.selected_tech    
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
     
     make_bottom_panel(160,70,:const_panel,@const_panel_back)
@@ -145,6 +148,8 @@ class View
   end
 
   def draw_tech_view
+    Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
+    Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
     [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,i|
       draw_tech_view_row(t,50+(i%2)*20,10+50*i)
     end
@@ -152,7 +157,7 @@ class View
 
   def draw_tech_view_row(tech_array,x,y)
     tech_array.each_with_index do |t,i|
-      Window.draw(x+i*50,y,@unavailable_tech_back)
+      Window.draw(x+i*50,y,@tech_back[t[0]])
       Window.draw(x+i*50+4,y+4,Image[t[0]])
     end
   end
@@ -173,14 +178,23 @@ class View
     return "生産物を選択"
   end
 
+  def refresh_tech_view
+    (TECH_1+TECH_2).map{|e|e[0]}.each do |t|
+      @tech_back[t].box_fill(0,0,40,40,DARKGRAY)
+      @tech_back[t].box_fill(0,0,40,40,DARKBLUE) if @game.tech_selectable?(t)
+      @tech_back[t].box_fill(0,40-(@game.tech_prog[t]*40/@game.tech_cost(t)),40,40,C_GREEN)
+    end
+  end
+
   def refresh_gages
+    tech = @game.selected_tech
     @growth_gage.box_fill(0,0,100,10,C_BLACK)
     @growth_gage.box_fill(0,0,@game.growth_pt*100/(@game.growth_level*4-2),10,C_GREEN)
     @great_person_gage.box_fill(0,0,100,10,C_BLACK)
     @great_person_gage.box_fill(0,0,@game.great_person_pt*100/(@game.great_person_num*20+20),10,C_GREEN)
-    if @game.selected_tech
+    if tech
       @research_gage.box_fill(0,0,140,10,C_BLACK)
-      @research_gage.box_fill(0,0,(@game.tech_prog[@game.selected_tech]+@game.temp_research_pt)*140/15,10,C_GREEN)
+      @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt)*140/@game.tech_cost(tech),10,C_GREEN)
     end
     @production_gage.clear
 
