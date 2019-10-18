@@ -52,11 +52,11 @@ Font100 = Font.new(100)
 IMAGES = [:science, :production, :culture, :growth, :deck, :trash, :emblem, :greatperson, :authority, :stagnation, :sword]
 
 TECH_1 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
-TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:calendar,"暦"],[:religion,"宗教"],[:irrigation,"灌漑"]]
+TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
 TECH_3 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
-TECH_4 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:calendar,"暦"],[:religion,"宗教"],[:irrigation,"灌漑"]]
+TECH_4 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
 TECH_5 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
-TECH_6 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:calendar,"暦"],[:religion,"宗教"],[:irrigation,"灌漑"]]
+TECH_6 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
 
 
 Window.height = 480
@@ -78,7 +78,7 @@ Window.load_resources do
   req.open("GET", url, false)
   req.send
   text_data = req.responseText
-  TEXT = Native(`JSON.parse(text_data)`)
+  DATA = Native(`JSON.parse(text_data)`)
 
   game = Game.new
   controller = Controller.new(game)
