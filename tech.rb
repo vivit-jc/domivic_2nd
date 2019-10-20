@@ -2,10 +2,16 @@ module Tech
 
   def calc_end_turn_tech
     @tech_prog[@selected_tech] += @temp_research_pt
-    # 研究ポイントの溢れ処理
+    # 研究完了処理
     if tech_finished?(@selected_tech)
+      # 研究ポイントの溢れ処理
       @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)
+      
+      # 技術データが書きかけなので、無ければここでreturn あとで消す
+      return unless DATA[@selected_tech.to_s]
+      
+      # 研究完了時にタイルがもらえる処理
       if tiles = DATA[@selected_tech.to_s]["finish_tile"]
         tiles.each do |t|
           card = Card.new(t[0],t[1])
@@ -35,7 +41,7 @@ module Tech
   end
 
   def tech_era(sym)
-    [TECH_1,TECH_2].each_with_index do |t,i|
+    @tech_array.each_with_index do |t,i|
       return i if t.flatten.include?(sym)
     end
   end
@@ -63,6 +69,30 @@ module Tech
         return tech_finished?(check_techs[col][0]) || tech_finished?(check_techs[col-1][0])
       end
     end
+  end
+
+  def tech_j(sym)
+    return @flat_tech_array.find{|e|e[0] == sym}[1]
+  end
+
+  def make_tech_text(sym)
+    mes = []
+    mes.push tech_j(sym)
+
+    # 技術データが書きかけなので、無ければreturn あとで消す
+    return mes unless DATA[sym.to_s]
+
+    [
+      ["finish_tile","タイルを取得: "],
+      ["unlock_tile","タイルを解禁: "],
+      ["unlock_bldg","建物を解禁: "],
+      ["unlock_unit","ユニットを解禁: "]
+    ].each do |e,j|
+      if obj = DATA[sym.to_s][e]
+        mes.push j+obj.to_s
+      end
+    end
+    return mes
   end
 
 end

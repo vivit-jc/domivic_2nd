@@ -17,8 +17,10 @@ class View
     @const_panel_back = Image.new(160,70)
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
 
+    @tech_array = @game.tech_array
+    @flat_tech_array = @game.flat_tech_array
     @tech_back = {}
-    (TECH_1+TECH_2).map{|e|e[0]}.each do |e|
+    @flat_tech_array.map{|e|e[0]}.each do |e|
       @tech_back[e] = Image.new(40,40)
     end
     @tech_view_back_button_back = Image.new(160,20)
@@ -127,8 +129,11 @@ class View
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
     Window.draw_font(LEFT_SIDE_X,60,"時代スコア #{@game.era_score}",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
-    Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) if @game.selectable_turn_end?
-
+    if @game.selectable_turn_end?
+      Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) 
+    else
+      Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,@game.need_to_turn_end_mes,Font16,{color: C_BLACK}) 
+    end
   end
 
   def draw_bottom
@@ -150,8 +155,15 @@ class View
   def draw_tech_view
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
-    [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,i|
+    @tech_array.reverse.each_with_index do |t,i|
       draw_tech_view_row(t,50+(i%2)*20,10+50*i)
+    end
+
+    pos_tech = @controller.pos_tech_view
+    if pos_tech and pos_tech != :back
+      @game.make_tech_text(@tech_array[pos_tech[0]][pos_tech[1]][0]).each_with_index do |t,i|
+        Window.draw_font(50,330+18*i,t,Font16)
+      end
     end
   end
 
@@ -170,8 +182,7 @@ class View
 
   def selected_tech_j
     return "技術を選択" unless @game.selected_tech
-    tech_list = TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6
-    return tech_list.find{|e|e[0] == @game.selected_tech}[1]
+    return @game.tech_j(@game.selected_tech)
   end
 
   def selected_product_j
@@ -179,7 +190,7 @@ class View
   end
 
   def refresh_tech_view
-    (TECH_1+TECH_2).map{|e|e[0]}.each do |t|
+    @flat_tech_array.map{|e|e[0]}.each do |t|
       @tech_back[t].box_fill(0,0,40,40,DARKGRAY)
       @tech_back[t].box_fill(0,0,40,40,DARKBLUE) if @game.tech_selectable?(t)
       @tech_back[t].box_fill(0,40-(@game.tech_prog[t]*40/@game.tech_cost(t)),40,40,C_GREEN)

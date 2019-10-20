@@ -87,6 +87,7 @@ class Controller
     return false
   end
 
+  # return [時代0~5, 左から何番目か]
   def pos_tech_view
     [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,row|
       t.size.times do |col|

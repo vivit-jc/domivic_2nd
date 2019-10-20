@@ -8,7 +8,7 @@ include Tech
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog
+  :era_score, :tech_prog, :tech_array, :flat_tech_array
 
   def initialize
     @status = :title
@@ -16,8 +16,9 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @game_status_memo = nil
     @view_status = :main_view
     @tech_array = [TECH_1,TECH_2,TECH_3,TECH_4,TECH_5,TECH_6]
+    @flat_tech_array = TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6
     @tech_prog = {}
-    (TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6).map{|e|e[0]}.each do |sym|
+    @flat_tech_array.map{|e|e[0]}.each do |sym|
       @tech_prog[sym] = 0
     end
 
@@ -116,6 +117,12 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def selectable_turn_end?
     return false unless @selected_tech
     return true
+  end
+
+  def need_to_turn_end_mes
+    if !@selected_tech
+      return "技術が未選択です"
+    end
   end
 
   def sum_point(kind)

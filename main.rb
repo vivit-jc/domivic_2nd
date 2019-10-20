@@ -50,7 +50,7 @@ IMAGES = [:science, :production, :culture, :growth, :deck, :trash, :emblem, :gre
 
 TECH_1 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
 TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
-TECH_3 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
+TECH_3 = [[:chivalry,"騎士道"],[:education,"教育"],[:metal_casting,"鋳金"],[:music,"音楽"],[:banking,"銀行制度"],[:philosofy,"哲学"]]
 TECH_4 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
 TECH_5 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
 TECH_6 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
@@ -63,7 +63,7 @@ Image.register(:title, "./img/chichen-itza.jpg")
 IMAGES.each do |m|
   Image.register(m, "./img/"+m.to_s+".png")
 end
-(TECH_1+TECH_2).each do |sym,name|
+(TECH_1+TECH_2+TECH_3).each do |sym,name|
   Image.register(sym,"./img/"+sym.to_s+".png")
 end
 

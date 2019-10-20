@@ -24,7 +24,7 @@
 		"finish_tile":[["construction",3]],
 		"unlock_unit":["walls"]
 	},
-	"monachy":{
+	"monarchy":{
 		"finish_tile":[["authority",1]],
 		"unlock_tile":[["invasion",0]]
 	},
