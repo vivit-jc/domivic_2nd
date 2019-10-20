@@ -85,7 +85,7 @@ class View
 
   def draw_units
     array = [
-      [:sword,"3/1"],
+      [:swordman,"3/1"],
       [:archery,"1/3"],
       [:archery,"1/3"]
     ]

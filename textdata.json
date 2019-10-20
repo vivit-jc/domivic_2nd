@@ -13,7 +13,7 @@
 		"unlock_bldg":["barracks"]
 	},
 	"metal_working":{
-		"finish_tile":[["production",1]],
+		"finish_tile":[["production",2]],
 		"unlock_unit":["swordman"]
 	},
 	"mythology":{
@@ -21,7 +21,7 @@
 		"unlock_bldg":["shrine"]
 	},
 	"masonry":{
-		"finish_tile":[["construction",2]],
+		"finish_tile":[["construction",3]],
 		"unlock_unit":["walls"]
 	},
 	"monachy":{
@@ -36,7 +36,7 @@
 		"finish_tile":[["inheritance",1]]
 	},
 	"construction":{
-		"finish_tile":[["construction",3]],
+		"finish_tile":[["construction",4]],
 		"unlock_bldg":["workshop"]
 	},
 	"currency":{

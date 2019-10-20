@@ -77,15 +77,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_end_turn
-    @tech_prog[@selected_tech] += @temp_research_pt
-    # 研究ポイントの溢れ処理
-    if tech_finished?(@selected_tech)
-      @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
-      @tech_prog[@selected_tech] = tech_cost(@selected_tech)
-      @selected_tech = nil
-    else
-      @temp_research_pt = 0
-    end
+    calc_end_turn_tech
 
   end
 

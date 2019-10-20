@@ -1,5 +1,23 @@
 module Tech
 
+  def calc_end_turn_tech
+    @tech_prog[@selected_tech] += @temp_research_pt
+    # 研究ポイントの溢れ処理
+    if tech_finished?(@selected_tech)
+      @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
+      @tech_prog[@selected_tech] = tech_cost(@selected_tech)
+      if tiles = DATA[@selected_tech.to_s]["finish_tile"]
+        tiles.each do |t|
+          card = Card.new(t[0],t[1])
+          @trash.push card
+        end
+      end
+      @selected_tech = nil
+    else
+      @temp_research_pt = 0
+    end
+  end
+
   def set_researching_tech(sym)
     @selected_tech = sym
   end
