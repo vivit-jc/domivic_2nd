@@ -37,12 +37,17 @@ class Controller
     @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
 
     
-    if @game.view_status == :main_view and pos_bottom == :tech_panel
-      @game.view_status = :tech_view
-      return
+    if @game.view_status == :main_view
+      if pos_bottom == :tech_panel
+        @game.view_status = :tech_view
+        return
+      elsif pos_bottom == :const_panel
+        @game.view_status = :product_view
+        return
+      end
     end
 
-    # 技術選択画面で技術をクリックしたとき
+    # 技術選択画面で技術か戻るボタンをクリックしたとき
     if @game.view_status == :tech_view and pos_tech_view
       if pos_tech_view == :back
         @game.view_status = :main_view
@@ -55,6 +60,15 @@ class Controller
       @game.set_researching_tech(@game.get_tech_sym_from_xy(pos_tech_view))
       @game.view_status = :main_view
     end
+
+    # 生産選択画面で生産物か戻るボタンをクリックしたとき
+    if @game.view_status == :product_view and pos_product_view
+      if pos_product_view == :back
+        @game.view_status = :main_view
+        return
+      end
+    end
+
   end
 
   def pos_title_menu
@@ -94,7 +108,14 @@ class Controller
         return [5-row,col] if mcheck(50+(row%2)*20+col*50,10+50*row,90+(row%2)*20+col*50,50+50*row)
       end
     end
-    return :back if mcheck(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+160,BOTTOM_Y+70)
+    return :back if mcheck(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH,BOTTOM_Y+70)
+    return false
+  end
+
+  # return [:tile/:unit/:bldg, 上から何番目か]
+  def pos_product_view
+
+    return :back if mcheck(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH*2+10,BOTTOM_Y+70)
     return false
   end
 

@@ -41,7 +41,7 @@
 	},
 	"currency":{
 		"finish_tile":[["trade",2]],
-		"unlock_tile":["trading_post"]
+		"unlock_bldg":["trading_post"]
 	},
 	"irrigation":{
 		"finish_tile":[["growth",3]],

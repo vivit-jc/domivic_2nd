@@ -62,6 +62,10 @@ class View
       refresh_tech_view if @view_status_buff != :tech_view
       @view_status_buff = :tech_view
       draw_tech_view
+    elsif @game.view_status == :product_view
+      refresh_product_view if @view_status_buff != :product_view
+      @view_status_buff = :product_view
+      draw_product_view
     else
       @view_status_buff = :main_view
       draw_hand
@@ -174,6 +178,27 @@ class View
     end
   end
 
+  def draw_product_view
+    Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,@tech_view_back_button_back)
+    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
+
+    Window.draw_font(10, 10, "タイル", Font20)
+    Window.draw_font(100, 10, "建物", Font20)
+    Window.draw_font(200, 10, "ユニット", Font20)
+
+    @game.unlocked_products[:tiles].each_with_index do |p,i|
+      Window.draw_font(10, 35+18*i, p, Font16)
+    end
+    @game.unlocked_products[:bldgs].each_with_index do |p,i|
+      Window.draw_font(100, 35+18*i, p, Font16)
+    end
+    @game.unlocked_products[:units].each_with_index do |p,i|
+      Window.draw_font(200, 35+18*i, p, Font16)
+    end
+
+  end
+
+
   def draw_message(str_array)
     str_array.each_with_index do |text, i|
       Window.draw_font(10, 480-MESSAGE_BOX_HEIGHT+i*22, text, Font20) 
@@ -195,6 +220,10 @@ class View
       @tech_back[t].box_fill(0,0,40,40,DARKBLUE) if @game.tech_selectable?(t)
       @tech_back[t].box_fill(0,40-(@game.tech_prog[t]*40/@game.tech_cost(t)),40,40,C_GREEN)
     end
+  end
+
+  def refresh_product_view
+
   end
 
   def refresh_gages

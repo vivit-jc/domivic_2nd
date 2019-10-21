@@ -1,14 +1,16 @@
 require_remote './card.rb'
 require_remote './tech.rb'
+require_remote './product.rb'
 
 class Game
 
 include Tech
+include Product
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products
 
   def initialize
     @status = :title
@@ -21,6 +23,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @flat_tech_array.map{|e|e[0]}.each do |sym|
       @tech_prog[sym] = 0
     end
+    @unlocked_products = {tiles: [], bldgs: [], units: []}
 
     @messages = [""]
     @turn = 1
@@ -79,6 +82,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def calc_end_turn
     calc_end_turn_tech
+    calc_end_turn_product
 
   end
 
