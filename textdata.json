@@ -1,59 +1,192 @@
 {
-	"agriculture":{
-		"finish_tile":[["growth",2]],
-		"unlock_tile":[["growth",1]],
-		"unlock_bldg":["granary"]
+	"tech":{
+		"agriculture":{
+			"finish_card":[["growth",2]],
+			"unlock_card":[["growth",1]],
+			"unlock_bldg":["granary"]
+		},
+		"writing":{
+			"finish_card":[["science",2]],
+			"unlock_bldg":["library"]
+		},
+		"archery":{
+			"unlock_unit":["archer"],
+			"unlock_bldg":["barracks"]
+		},
+		"metal_working":{
+			"finish_card":[["production",2]],
+			"unlock_unit":["swordman"]
+		},
+		"mythology":{
+			"finish_card":[["culture",2]],
+			"unlock_bldg":["shrine"]
+		},
+		"masonry":{
+			"finish_card":[["construction",3]],
+			"unlock_unit":["walls"]
+		},
+		"monarchy":{
+			"finish_card":[["authority",1]],
+			"unlock_card":[["invasion",0]]
+		},
+		"mathematics":{
+			"finish_card":[["science",3]],
+			"unlock_unit":["catapult"]
+		},
+		"law":{
+			"finish_card":[["inheritance",1]]
+		},
+		"construction":{
+			"finish_card":[["construction",4]],
+			"unlock_bldg":["workshop"]
+		},
+		"currency":{
+			"finish_card":[["trade",2]],
+			"unlock_bldg":["trading_post"]
+		},
+		"irrigation":{
+			"finish_card":[["growth",3]],
+			"unlock_card":[["growth",2]]
+		},
+		"religion":{
+			"finish_card":[["culture",3]],
+			"unlock_bldg":["temple"],
+			"unlock_card":[["culture",2]]
+		},
+		"horse_riding":{
+			"unlock_unit":["horseman"],
+			"unlock_bldg":["stable"]
+		}
 	},
-	"writing":{
-		"finish_tile":[["science",2]],
-		"unlock_bldg":["library"]
-	},
-	"archery":{
-		"unlock_unit":["archer"],
-		"unlock_bldg":["barracks"]
-	},
-	"metal_working":{
-		"finish_tile":[["production",2]],
-		"unlock_unit":["swordman"]
-	},
-	"mythology":{
-		"finish_tile":[["culture",2]],
-		"unlock_bldg":["shrine"]
-	},
-	"masonry":{
-		"finish_tile":[["construction",3]],
-		"unlock_unit":["walls"]
-	},
-	"monarchy":{
-		"finish_tile":[["authority",1]],
-		"unlock_tile":[["invasion",0]]
-	},
-	"mathematics":{
-		"finish_tile":[["science",3]],
-		"unlock_unit":["catapult"]
-	},
-	"law":{
-		"finish_tile":[["inheritance",1]]
-	},
-	"construction":{
-		"finish_tile":[["construction",4]],
-		"unlock_bldg":["workshop"]
-	},
-	"currency":{
-		"finish_tile":[["trade",2]],
-		"unlock_bldg":["trading_post"]
-	},
-	"irrigation":{
-		"finish_tile":[["growth",3]],
-		"unlock_tile":[["growth",2]]
-	},
-	"religion":{
-		"finish_tile":[["culture",3]],
-		"unlock_bldg":["temple"],
-		"unlock_tile":[["culture",2]]
-	},
-	"horse_riding":{
-		"unlock_unit":["horseman"],
-		"unlock_bldg":["stable"]
+	"product":{
+		"bldg":{
+			"granary":{
+				"cost":	12,
+				"name": "穀物庫",
+				"text": "成長ptを追加で1ターン保持する。"
+			},
+			"library":{
+				"cost": 12,
+				"name": "図書館",
+				"text": "考え中"
+			},
+			"barracks":{
+				"cost": 12,
+				"name": "兵舎",
+				"text": "兵士ユニットの待機上限+2"				
+			},
+			"shrine":{
+				"cost": 12,
+				"name": "神殿",
+				"text": "考え中"				
+			},
+			"workshop":{
+				"cost": 12,
+				"name": "工房",
+				"text": "考え中"
+			},
+			"trading_post":{
+				"cost": 12,
+				"name": "交易所",
+				"text": "考え中"
+			},
+			"temple":{
+				"cost": 12,
+				"name": "寺院",
+				"text": "考え中"
+			},
+			"stable":{
+				"cost": 12,
+				"name": "厩舎",
+				"text": "馬ユニットの待機上限+2"
+			}
+		},
+		"card":{
+			"science":{
+				"name":"研究",
+				"cost":[5,10,15,20]
+			},
+			"growth":{
+				"name":"成長",
+				"cost":[5,10,15,20]
+			},
+			"production":{
+				"name":"生産",
+				"cost":[5,10,15,20]
+			},
+			"culture":{
+				"name":"文化",
+				"cost":[5,10,15,20]
+			},
+			"authority":{
+				"name":"権威",
+				"cost":[5,10,15,20],
+				"text":"アクション: 手札を数字の枚数除外する"
+			},
+			"inheritance":{
+				"name":"継承",
+				"cost":[5,10,15,20],
+				"text":"アクション: 手札を数字の枚数山札の上に置く"
+			},
+			"trade":{
+				"name":"交易",
+				"cost":[5,10,15,20],
+				"text":"アクション: 数字の枚数追加で引く"
+			},
+			"construction":{
+				"name":"建築",
+				"cost":[5,10,15,20],
+				"text":"建物のみに使える"
+			},
+			"invasion":{
+				"name":"侵攻",
+				"cost":[5,10,15,20],
+				"text":"アクション: 侵攻を行う"
+			}
+		},
+		"unit":{
+			"warrior":{
+				"name":"戦士",
+				"cost":3,
+				"att":2,
+				"def":1,
+				"utype":"soldier"
+			},
+			"swordman":{
+				"name":"剣士",
+				"cost":6,
+				"att":3,
+				"def":1,
+				"utype":"soldier"
+			},
+			"archer":{
+				"name":"弓兵",
+				"cost":6,
+				"att":3,
+				"def":1,
+				"utype":"soldier"
+			},
+			"walls":{
+				"name":"防壁",
+				"cost":10,
+				"att":0,
+				"def":5,
+				"utype":"defender"
+			},
+			"horseman":{
+				"name":"騎兵",
+				"cost":10,
+				"att":4,
+				"def":4,
+				"utype":"mount"
+			},
+			"catapult":{
+				"name":"カタパルト",
+				"cost":10,
+				"att":6,
+				"def":0,
+				"utype":"siege"
+			}
+		}
 	}
 }

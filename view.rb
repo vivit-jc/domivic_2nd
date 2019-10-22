@@ -163,6 +163,7 @@ class View
       draw_tech_view_row(t,50+(i%2)*20,10+50*i)
     end
 
+    # マウスオーバーで説明を表示
     pos_tech = @controller.pos_tech_view
     if pos_tech and pos_tech != :back
       @game.make_tech_text(@tech_array[pos_tech[0]][pos_tech[1]][0]).each_with_index do |t,i|
@@ -180,24 +181,37 @@ class View
 
   def draw_product_view
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,@tech_view_back_button_back)
-    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+75,BOTTOM_Y+52,"戻る",Font16)
 
     Window.draw_font(10, 10, "タイル", Font20)
-    Window.draw_font(100, 10, "建物", Font20)
-    Window.draw_font(200, 10, "ユニット", Font20)
+    Window.draw_font(130, 10, "建物", Font20)
+    Window.draw_font(250, 10, "ユニット", Font20)
 
-    @game.unlocked_products[:tiles].each_with_index do |p,i|
-      Window.draw_font(10, 35+18*i, p, Font16)
+    @game.unlocked_products[:cards].each_with_index do |p,i|
+      card = CARDDATA[p[0]]
+      Window.draw_font(10, 35+18*i, card.name+p[1].to_s, Font16)
+      Window.draw_font(80, 35+18*i, card.cost[p[1]], Font16)
     end
     @game.unlocked_products[:bldgs].each_with_index do |p,i|
-      Window.draw_font(100, 35+18*i, p, Font16)
+      bldg = BLDGDATA[p]
+      Window.draw_font(130, 35+18*i, bldg.name, Font16)
+      Window.draw_font(200, 35+18*i, bldg.cost, Font16)      
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
-      Window.draw_font(200, 35+18*i, p, Font16)
+      unit = UNITDATA[p]
+      Window.draw_font(250, 35+18*i, unit.name, Font16)
+      Window.draw_font(320, 35+18*i, unit.cost, Font16)
+    end
+
+    # マウスオーバーで説明を表示
+    pos_product = @controller.pos_product_view
+    if pos_product and pos_product != :back
+      @game.make_product_text(@game.unlocked_products[pos_product[0]][pos_product[1]]).each_with_index do |t,i|
+        Window.draw_font(50,330+18*i,t,Font16)
+      end
     end
 
   end
-
 
   def draw_message(str_array)
     str_array.each_with_index do |text, i|
@@ -211,7 +225,8 @@ class View
   end
 
   def selected_product_j
-    return "生産物を選択"
+    return "生産物を選択" unless @game.selected_product
+    return @game.product_j(@game.selected_product)
   end
 
   def refresh_tech_view

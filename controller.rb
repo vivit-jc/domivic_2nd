@@ -67,6 +67,8 @@ class Controller
         @game.view_status = :main_view
         return
       end
+      @game.set_producing_obj(pos_product_view)
+      @game.view_status = :main_view
     end
 
   end
@@ -112,8 +114,24 @@ class Controller
     return false
   end
 
-  # return [:tile/:unit/:bldg, 上から何番目か]
+  # return [:cards/:units/:bldgs, 上から何番目か]
   def pos_product_view
+    obj = @game.unlocked_products
+    card = obj[:cards]
+    bldg = obj[:bldgs]
+    unit = obj[:units]
+
+    card.each_with_index do |c,i|
+      return [:cards,i] if mcheck(10,35+18*i,100,51+18*i)
+    end
+
+    bldg.each_with_index do |b,i|
+      return [:bldgs,i] if mcheck(120,35+18*i,220,51+18*i)
+    end
+
+    unit.each_with_index do |u,i|
+      return [:units,i] if mcheck(250,35+18*i,340,51+18*i)
+    end    
 
     return :back if mcheck(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH*2+10,BOTTOM_Y+70)
     return false

@@ -9,11 +9,11 @@ module Tech
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)
       
       # 技術データが書きかけなので、無ければここでreturn あとで消す
-      return unless DATA[@selected_tech.to_s]
+      return unless TECHDATA[@selected_tech.to_s]
       
       # 研究完了時にタイルがもらえる処理
-      if tiles = DATA[@selected_tech.to_s]["finish_tile"]
-        tiles.each do |t|
+      if cards = TECHDATA[@selected_tech.to_s]["finish_card"]
+        cards.each do |t|
           card = Card.new(t[0],t[1])
           @trash.push card
         end
@@ -80,15 +80,15 @@ module Tech
     mes.push tech_j(sym)
 
     # 技術データが書きかけなので、無ければreturn あとで消す
-    return mes unless DATA[sym.to_s]
+    return mes unless TECHDATA[sym.to_s]
 
     [
-      ["finish_tile","タイルを取得: "],
-      ["unlock_tile","タイルを解禁: "],
+      ["finish_card","タイルを取得: "],
+      ["unlock_card","タイルを解禁: "],
       ["unlock_bldg","建物を解禁: "],
       ["unlock_unit","ユニットを解禁: "]
     ].each do |e,j|
-      if obj = DATA[sym.to_s][e]
+      if obj = TECHDATA[sym.to_s][e]
         mes.push j+obj.to_s
       end
     end

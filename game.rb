@@ -10,7 +10,7 @@ include Product
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :product_prog
 
   def initialize
     @status = :title
@@ -20,10 +20,11 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @tech_array = [TECH_1,TECH_2,TECH_3,TECH_4,TECH_5,TECH_6]
     @flat_tech_array = TECH_1+TECH_2+TECH_3+TECH_4+TECH_5+TECH_6
     @tech_prog = {}
+    @product_prog = {}
     @flat_tech_array.map{|e|e[0]}.each do |sym|
       @tech_prog[sym] = 0
     end
-    @unlocked_products = {tiles: [], bldgs: [], units: []}
+    @unlocked_products = {cards: [], bldgs: [], units: []}
 
     @messages = [""]
     @turn = 1

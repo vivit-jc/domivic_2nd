@@ -76,6 +76,10 @@ Window.load_resources do
   req.send
   text_data = req.responseText
   DATA = Native(`JSON.parse(text_data)`)
+  TECHDATA = DATA[:tech]
+  BLDGDATA = DATA[:product][:bldg]
+  CARDDATA = DATA[:product][:card]
+  UNITDATA = DATA[:product][:unit]
 
   game = Game.new
   controller = Controller.new(game)
