@@ -2,7 +2,6 @@
 	"tech":{
 		"agriculture":{
 			"finish_card":[["growth",2]],
-			"unlock_card":[["growth",1]],
 			"unlock_bldg":["granary"]
 		},
 		"writing":{

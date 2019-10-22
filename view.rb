@@ -119,7 +119,7 @@ class View
 
     Window.draw_font(5,170,"属州 2",Font20)
     Window.draw_font(5,190,"脅威Lv 2",Font20)
-    Window.draw_font(5,210,"建築物 3",Font20)
+    Window.draw_font(5,210,"建物 #{@game.buildings.size}",Font20)
 
     Window.draw(5,240,Image[:emblem])
     Window.draw(42,240,Image[:culture])
@@ -152,7 +152,7 @@ class View
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+5,Image[:production])
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,"#{@game.production_pt}/20",Font16)
+    Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,make_production_str,Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
   end
 
@@ -242,16 +242,22 @@ class View
   end
 
   def refresh_gages
-    tech = @game.selected_tech
     @growth_gage.box_fill(0,0,100,10,C_BLACK)
     @growth_gage.box_fill(0,0,@game.growth_pt*100/(@game.growth_level*4-2),10,C_GREEN)
     @great_person_gage.box_fill(0,0,100,10,C_BLACK)
     @great_person_gage.box_fill(0,0,@game.great_person_pt*100/(@game.great_person_num*20+20),10,C_GREEN)
+
+    tech = @game.selected_tech
     if tech
       @research_gage.box_fill(0,0,140,10,C_BLACK)
       @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt)*140/@game.tech_cost(tech),10,C_GREEN)
     end
-    @production_gage.clear
+
+    product = @game.selected_product
+    if product
+      @production_gage.box_fill(0,0,140,10,C_BLACK)
+      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product))*140/@game.product_cost(product),10,C_GREEN)
+    end
 
   end
 
@@ -261,6 +267,14 @@ class View
     else
       image.box_fill(0,0,width,height,DARKGRAY)
     end
+  end
+
+  def make_production_str
+    product = @game.selected_product
+    return "" unless product
+    str = (@game.get_product_and_const_pt(product)+@game.get_product_prog(product)).to_s
+    str += "/"+@game.product_cost(product).to_s
+    return str
   end
 
   def draw_xy

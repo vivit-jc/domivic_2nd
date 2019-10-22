@@ -9,8 +9,8 @@ include Product
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
-  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :product_prog
+  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units
 
   def initialize
     @status = :title
@@ -24,13 +24,15 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @flat_tech_array.map{|e|e[0]}.each do |sym|
       @tech_prog[sym] = 0
     end
-    @unlocked_products = {cards: [], bldgs: [], units: []}
+    @unlocked_products = {cards: [[:growth,1]], bldgs: [], units: [:warrior]}
 
     @messages = [""]
     @turn = 1
     @deck = init_deck.shuffle
     @hand = [@deck.pop,@deck.pop,@deck.pop]
     @trash = []
+    @buildings = []
+    @units = []
 
     @selected_tech = nil
     @selected_product = nil
@@ -42,6 +44,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @temp_research_pt = 0
     @culture_pt = 0
     @production_pt = 0
+    @const_pt = 0
 
     @era_score = 0
 
@@ -117,16 +120,20 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def calc_production
     @production_pt += sum_point(:production)
+    @const_pt += sum_point(:construction)
   end
 
   def selectable_turn_end?
     return false unless @selected_tech
+    return false unless @selected_product
     return true
   end
 
   def need_to_turn_end_mes
     if !@selected_tech
       return "技術が未選択です"
+    elsif !@selected_product
+      return "生産対象が未選択です"
     end
   end
 

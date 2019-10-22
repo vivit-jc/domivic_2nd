@@ -4,6 +4,7 @@ module Tech
     @tech_prog[@selected_tech] += @temp_research_pt
     # 研究完了処理
     if tech_finished?(@selected_tech)
+      add_log("研究完了: "+@selected_tech.to_s)
       # 研究ポイントの溢れ処理
       @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)
@@ -83,8 +84,8 @@ module Tech
     return mes unless TECHDATA[sym.to_s]
 
     [
-      ["finish_card","タイルを取得: "],
-      ["unlock_card","タイルを解禁: "],
+      ["finish_card","カードを取得: "],
+      ["unlock_card","カードを解禁: "],
       ["unlock_bldg","建物を解禁: "],
       ["unlock_unit","ユニットを解禁: "]
     ].each do |e,j|
