@@ -90,17 +90,13 @@ class View
   end
 
   def draw_units
-    array = [
-      [:swordman,"3/1"],
-      [:archery,"1/3"],
-      [:archery,"1/3"]
-    ]
-    array.each_with_index do |img,i|
+    @game.units.each_with_index do |u,i|
+      unit = UNITDATA[u]
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = UNITS_Y+65*(i/5).floor
       Window.draw(x,y,@unitback)
-      Window.draw(x+2,y+2,Image[img[0]])
-      Window.draw_font(x+2,y+38,img[1],Font16)
+      Window.draw(x+2,y+2,Image[u.to_sym])
+      Window.draw_font(x+2,y+38,"#{unit.att}/#{unit.def}",Font16)
     end
   end
 
