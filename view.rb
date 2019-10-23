@@ -107,9 +107,9 @@ class View
   def draw_rightside
 
     Window.draw(5,5,Image[:deck])
-    Window.draw(44,5,Image[:trash])
+    Window.draw(47,5,Image[:trash])
     Window.draw_font(8,42,sprintf("% 2d",@game.deck.size),Font20)
-    Window.draw_font(47,42,sprintf("% 2d",@game.trash.size),Font20)
+    Window.draw_font(49,42,sprintf("% 2d",@game.trash.size),Font20)
     Window.draw(5,62,Image[:growth])
     Window.draw_font(45,65,"Lv#{@game.growth_level}",Font16)
     Window.draw_font(45,83,"#{@game.growth_pt}/#{@game.growth_level*4-2}",Font16)
@@ -118,21 +118,24 @@ class View
     Window.draw_font(45,135,"#{@game.great_person_pt}/#{@game.great_person_num*20+20}",Font16)
     Window.draw(5,153,@great_person_gage)
 
-    Window.draw_font(5,170,"属州 2",Font20)
-    Window.draw_font(5,190,"脅威Lv 2",Font20)
-    Window.draw_font(5,210,"建物 #{@game.buildings.size}",Font20)
+    Window.draw(5,170,Image[:construction])
+    Window.draw(47,170,Image[:money_bag])
+    Window.draw_font(8,205,sprintf("% 2d",@game.buildings.size.to_s),Font20)
+    Window.draw_font(49,205,sprintf("% 2d",@game.coin.to_s),Font20)
 
     Window.draw(5,240,Image[:emblem])
-    Window.draw(42,240,Image[:culture])
-    Window.draw_font(8,280,"02",Font20)
-    Window.draw_font(44,280,sprintf("% 2d",@game.culture_pt.to_s),Font20)
+    Window.draw(47,240,Image[:culture])
+    Window.draw_font(8,280," 2",Font20)
+    Window.draw_font(49,280,sprintf("% 2d",@game.culture_pt.to_s),Font20)
     
   end
 
   def draw_leftside
     Window.draw_font(LEFT_SIDE_X+20,5,"【太古】",Font28)
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
-    Window.draw_font(LEFT_SIDE_X,60,"時代スコア #{@game.era_score}",Font20)
+    Window.draw_font(LEFT_SIDE_X,62,"時代スコア #{@game.era_score}",Font20)
+    Window.draw_font(LEFT_SIDE_X,84,"属州 2",Font20)
+    Window.draw_font(LEFT_SIDE_X,106,"脅威Lv 2",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
     if @game.selectable_turn_end?
       Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) 
@@ -142,19 +145,21 @@ class View
   end
 
   def draw_bottom
-    make_bottom_panel(160,70,:tech_panel,@tech_panel_back)
+    #make_bottom_panel(160,70,:tech_panel,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,@game.selected_tech ? Image[@game.selected_tech] : Image[:science])
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/#{@game.tech_cost(@game.selected_tech)}",Font16) if @game.selected_tech    
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
+    Window.draw(RIGHT_SIDE_WIDTH+130,BOTTOM_Y+5,Image[:coin]) if @game.selected_tech
     
-    make_bottom_panel(160,70,:const_panel,@const_panel_back)
+    #make_bottom_panel(160,70,:const_panel,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+5,Image[:production])
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,make_production_str,Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
+    Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+140,BOTTOM_Y+5,Image[:coin]) if @game.selected_product
   end
 
   def draw_rightside_info
