@@ -81,6 +81,12 @@ class Controller
     return -1
   end
 
+  def pos_rightside
+    return :deck if mcheck(5,5,37,37)
+    return :trash if mcheck(44,5,76,37)
+  end
+
+
   def pos_leftside
     d_width = 0
     d_height = 0

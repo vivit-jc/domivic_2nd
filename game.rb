@@ -10,7 +10,7 @@ include Product
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log
 
   def initialize
     @status = :title
@@ -47,6 +47,9 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @const_pt = 0
 
     @era_score = 0
+
+    @log = []
+    @archive = []
 
     calc_start_turn
 
@@ -85,6 +88,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_end_turn
+    @archive += @log
+    @log = []
     calc_end_turn_tech
     calc_end_turn_product
 
@@ -144,7 +149,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def add_log(str)
-    p str
+    @log.push str
   end
 
   def push_space

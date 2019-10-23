@@ -16,6 +16,8 @@ class View
     @tech_panel_back.box_fill(0,0,160,70,DARKGRAY)
     @const_panel_back = Image.new(160,70)
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
+    @deckinfoback = Image.new(60,480)
+    @trashinfoback = Image.new(60,480)
 
     @tech_array = @game.tech_array
     @flat_tech_array = @game.flat_tech_array
@@ -28,8 +30,8 @@ class View
 
     @growth_gage = Image.new(100,10)
     @great_person_gage = Image.new(100,10)
-    @research_gage = Image.new(140,10)
-    @production_gage = Image.new(140,10)
+    @research_gage = Image.new(150,10)
+    @production_gage = Image.new(150,10)
   end
 
   def draw
@@ -57,6 +59,7 @@ class View
   def draw_game
     if Input.mouse_push?( M_LBUTTON )
       refresh_gages
+      refresh_back
     end
     if @game.view_status == :tech_view
       refresh_tech_view if @view_status_buff != :tech_view
@@ -73,7 +76,8 @@ class View
       draw_leftside
       draw_units
       draw_bottom
-      draw_message(@game.messages)
+      draw_rightside_info
+      draw_log
     end
 
   end
@@ -101,6 +105,7 @@ class View
   end
 
   def draw_rightside
+
     Window.draw(5,5,Image[:deck])
     Window.draw(44,5,Image[:trash])
     Window.draw_font(8,42,sprintf("% 2d",@game.deck.size),Font20)
@@ -150,6 +155,27 @@ class View
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,make_production_str,Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
+  end
+
+  def draw_rightside_info
+    case(@controller.pos_rightside)
+    when :deck
+      Window.draw(Input.mouse_x,Input.mouse_y,@deckinfoback)
+      @game.deck.sort{|a,b|a.name<=>b.name}.each_with_index do |c,i|
+        Window.draw_font(Input.mouse_x+3,Input.mouse_y+3+18*i,c.name,Font16)
+      end
+    when :trash 
+      Window.draw(Input.mouse_x,Input.mouse_y,@trashinfoback)
+      @game.trash.sort{|a,b|a.name<=>b.name}.each_with_index do |c,i|
+        Window.draw_font(Input.mouse_x+3,Input.mouse_y+3+18*i,c.name,Font16)
+      end
+    end
+  end
+
+  def draw_log
+    @game.log.each_with_index do |l,i|
+      Window.draw_font(RIGHT_SIDE_WIDTH,BOTTOM_Y-18*i-20,l,Font16)
+    end
   end
 
   def draw_tech_view
@@ -237,22 +263,29 @@ class View
 
   end
 
+  def refresh_back
+    @deckinfoback = Image.new(60,480)
+    @trashinfoback = Image.new(60,480)
+    @deckinfoback.box_fill(0,0,60,@game.deck.size*18,DARKGRAY) if @game.deck.size > 0
+    @trashinfoback.box_fill(0,0,60,@game.trash.size*18,DARKGRAY) if @game.trash.size > 0
+  end
+
   def refresh_gages
-    @growth_gage.box_fill(0,0,100,10,C_BLACK)
+    @growth_gage = Image.new(100,10)
     @growth_gage.box_fill(0,0,@game.growth_pt*100/(@game.growth_level*4-2),10,C_GREEN)
-    @great_person_gage.box_fill(0,0,100,10,C_BLACK)
+    @great_person_gage = Image.new(100,10)
     @great_person_gage.box_fill(0,0,@game.great_person_pt*100/(@game.great_person_num*20+20),10,C_GREEN)
 
     tech = @game.selected_tech
     if tech
-      @research_gage.box_fill(0,0,140,10,C_BLACK)
-      @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt)*140/@game.tech_cost(tech),10,C_GREEN)
+      @research_gage = Image.new(150,10)
+      @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt)*150/@game.tech_cost(tech),10,C_GREEN)
     end
 
     product = @game.selected_product
     if product
-      @production_gage.box_fill(0,0,140,10,C_BLACK)
-      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product))*140/@game.product_cost(product),10,C_GREEN)
+      @production_gage = Image.new(150,10)
+      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product))*150/@game.product_cost(product),10,C_GREEN)
     end
 
   end

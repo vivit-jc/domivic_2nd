@@ -4,7 +4,7 @@ module Tech
     @tech_prog[@selected_tech] += @temp_research_pt
     # 研究完了処理
     if tech_finished?(@selected_tech)
-      add_log("研究完了: "+@selected_tech.to_s)
+      add_log("研究完了: "+tech_j(@selected_tech))
       # 研究ポイントの溢れ処理
       @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)

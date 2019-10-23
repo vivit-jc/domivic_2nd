@@ -38,7 +38,7 @@ module Product
     @const_pt = 0
 
   	if production_finished?(product)
-  	  add_log("生産完了: "+@selected_product.to_s)
+  	  add_log("生産完了: "+product_j(@selected_product))
   	  if product.class == Array
   	    @production_pt += @product_prog[product[0]][product[1]] - product_cost(product)
   	    @trash.push Card.new(product[0],product[1])
