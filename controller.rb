@@ -35,7 +35,7 @@ class Controller
 
   def click_on_game
     @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
-
+    @game.click_hand(pos_hand) if pos_hand
     
     if @game.view_status == :main_view
       if pos_bottom == :tech_panel
@@ -81,11 +81,19 @@ class Controller
     return -1
   end
 
+  def pos_hand
+    @game.hand.each_with_index do |card,i|
+      x = RIGHT_SIDE_WIDTH+(i%5)*65
+      y = 5+65*(i/5).floor
+      return i if mcheck(x,y,x+50,y+50)
+    end
+    return false
+  end
+
   def pos_rightside
     return :deck if mcheck(5,5,37,37)
     return :trash if mcheck(44,5,76,37)
   end
-
 
   def pos_leftside
     d_width = 0

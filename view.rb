@@ -8,6 +8,8 @@ class View
 
     @cardback = Image.new(60,60)
     @cardback.box_fill(0,0,60,60,DARKGRAY)
+    @actioncardback = Image.new(60,60)
+    @actioncardback.box_fill(0,0,60,60,DARKBLUE)    
     @unitback = Image.new(60,60)
     @unitback.box_fill(0,0,60,60,DARKRED)
     @buttonback = Image.new(170,70)
@@ -86,8 +88,9 @@ class View
     @game.hand.each_with_index do |card,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
-      Window.draw(x,y,@cardback)
+      Window.draw(x,y,card.action? ? @actioncardback : @cardback)
       Window.draw(x+2,y+2,Image[card.kind])
+      Window.draw_font(x+45,y+3,"★",Font12) if @game.action_pt > 0 and card.action?
       Window.draw_font(x+2,y+38,card.name,Font16)
     end
     

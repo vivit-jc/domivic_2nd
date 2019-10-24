@@ -11,4 +11,12 @@ attr_reader :num, :kind, :name
   	return CARDDATA[@kind].name+@num.to_s
   end
 
+  def action?
+    return CARDDATA[@kind].action
+  end
+
+  def data
+    return CARDDATA[@kind]
+  end
+
 end

@@ -133,13 +133,14 @@ module Product
   end
 
   def utype_j(utype)
-  	if utype == "soldier"
+  	case utype
+  	when "soldier"
   	  return "兵士"
-  	elsif utype == "mount"
+  	when "mount"
   	  return "騎馬"
-  	elsif utype == "siege"
+  	when "siege"
   	  return "攻城"
-  	elsif utype == "defender"
+  	when "defender"
   	  return "防衛"
   	end
   end

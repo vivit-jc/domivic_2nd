@@ -10,7 +10,8 @@ include Product
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :coin
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :coin, :action_pt,
+  :target
 
   def initialize
     @status = :title
@@ -37,7 +38,9 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
     @selected_tech = nil
     @selected_product = nil
+    @target = nil
 
+    @action_pt = 0
     @growth_level = 1
     @growth_pt = 0
     @great_person_num = 0    
@@ -61,6 +64,16 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @status = :game
   end
 
+  def click_hand(pos)
+    card = @hand[pos]
+    return unless card.action?
+    case card
+    when :authority
+    when :trade
+    end
+    
+  end
+
   def turn_end
     calc_end_turn
     while(@hand.size > 0)
@@ -81,6 +94,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_start_turn
+    @action_pt = 1
     calc_growth
     calc_great_person
     calc_research
