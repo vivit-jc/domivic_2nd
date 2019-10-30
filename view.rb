@@ -71,6 +71,8 @@ class View
       refresh_product_view if @view_status_buff != :product_view
       @view_status_buff = :product_view
       draw_product_view
+    elsif @game.view_status == :log_view
+      draw_log_view
     else
       @view_status_buff = :main_view
       draw_hand
@@ -108,7 +110,6 @@ class View
   end
 
   def draw_rightside
-
     Window.draw(5,5,Image[:deck])
     Window.draw(47,5,Image[:trash])
     Window.draw_font(8,42,sprintf("% 2d",@game.deck.size),Font20)
@@ -154,15 +155,25 @@ class View
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/#{@game.tech_cost(@game.selected_tech)}",Font16) if @game.selected_tech    
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
-    Window.draw(RIGHT_SIDE_WIDTH+130,BOTTOM_Y+5,Image[:coin]) if @game.selected_tech
-    
+
+    if @game.selected_tech
+      coin = @controller.pos_bottom == :tech_coin ? :coin_l : :coin
+      Window.draw(RIGHT_SIDE_WIDTH+125,BOTTOM_Y+5,Image[coin])
+    end
+
     #make_bottom_panel(160,70,:const_panel,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y,@const_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+5,Image[:production])
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+3,selected_product_j,Font16)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+60,BOTTOM_Y+21,make_production_str,Font16)
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+15,BOTTOM_Y+52,@production_gage)
-    Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+140,BOTTOM_Y+5,Image[:coin]) if @game.selected_product
+
+    if @game.selected_product
+      coin = @controller.pos_bottom == :product_coin ? :coin_l : :coin
+      Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+135,BOTTOM_Y+5,Image[coin])
+    end
+
+    Window.draw(5,BOTTOM_Y,Image[:writing])
   end
 
   def draw_rightside_info
@@ -241,6 +252,13 @@ class View
       end
     end
 
+  end
+
+  def draw_log_view
+    (@game.archive+@game.log).reverse.each_with_index do |text,i|
+      Window.draw_font(10, 10+i*18, text, Font16)
+    end
+    Window.draw_font(100, 460, "クリックで戻ります", Font16)
   end
 
   def draw_message(str_array)

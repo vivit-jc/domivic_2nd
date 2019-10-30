@@ -10,7 +10,7 @@ include Product
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :coin, :action_pt,
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :action_pt,
   :target, :click_mode
 
   def initialize
@@ -119,10 +119,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def calc_start_turn
     @action_pt = 1
-    calc_growth
-    calc_research
-    calc_culture
-    calc_production
+    calc_all_points
   end
 
   def calc_end_turn
@@ -200,9 +197,18 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
       if @deck.size == 0
         @deck = @trash.shuffle
         @trash = []
+        return if @deck.size == 0
       end
       @hand.push @deck.pop
     end
+    calc_all_points
+  end
+
+  def calc_all_points
+    calc_growth
+    calc_research
+    calc_culture
+    calc_production
   end
 
   def push_space
@@ -211,7 +217,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:construction,1],[:authority,1]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:science,1],[:science,1]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

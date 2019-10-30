@@ -40,17 +40,21 @@ class Controller
     else
       @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
     end
-    
-    @game.click_hand(pos_hand) if pos_hand
+
+    @game.click_hand(pos_hand) if pos_hand and @game.view_status == :main_view
 
     # 技術選択画面か生産選択画面に行く
     if @game.view_status == :main_view
-      if pos_bottom == :tech_panel
+      case(pos_bottom)
+      when :tech_panel
         @game.view_status = :tech_view
         return
-      elsif pos_bottom == :const_panel
+      when :const_panel
         @game.view_status = :product_view
         return
+      when :log
+        @game.view_status = :log_view
+        return        
       end
     end
 
@@ -77,6 +81,8 @@ class Controller
       @game.set_producing_obj(pos_product_view)
       @game.view_status = :main_view
     end
+
+    @game.view_status = :main_view if @game.view_status == :log_view 
 
   end
 
@@ -115,12 +121,16 @@ class Controller
 
   def pos_bottom
     d_width = 0
-    d_height = 0    
+    d_height = 0
+    return :tech_coin if mcheck(RIGHT_SIDE_WIDTH+125, BOTTOM_Y+5, RIGHT_SIDE_WIDTH+125+32, BOTTOM_Y+5+32)
+    return :product_coin if mcheck(RIGHT_SIDE_WIDTH+170+125, BOTTOM_Y+5, RIGHT_SIDE_WIDTH+170+125+32, BOTTOM_Y+5+32)  
     [[160,70,:tech_panel],[160,70,:const_panel]].each do |width, height, sym|
       d_width += width
       return sym if(mcheck(RIGHT_SIDE_WIDTH, BOTTOM_Y, RIGHT_SIDE_WIDTH+d_width, BOTTOM_Y+height))
       d_width += 10
     end
+
+    return :log if mcheck(5,BOTTOM_Y,5+32,BOTTOM_Y+32)
     return false
   end
 
