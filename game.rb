@@ -11,7 +11,7 @@ attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
   :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :coin, :action_pt,
-  :target
+  :target, :click_mode
 
   def initialize
     @status = :title
@@ -39,6 +39,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @selected_tech = nil
     @selected_product = nil
     @target = nil
+    @click_mode = nil
 
     @action_pt = 0
     @growth_level = 1
@@ -65,13 +66,32 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def click_hand(pos)
+    if @click_mode == :select_hand
+      action_effect(pos)
+      if @action_card[:n] == 0
+        @click_mode = nil
+        @action_card = nil
+      end
+      return
+    end
     card = @hand[pos]
     return unless card.action?
-    case card
+    case card.kind
     when :authority
+      @click_mode = :select_hand
+      @action_card = {card: card,n: card.num}
+      add_log("除外するカードを選んでください")
     when :trade
+
     end
     
+  end
+
+  def action_effect(pos)
+    if @action_card.kind == :authority
+      @hand.delete_at(pos)
+      @action_card[:n] -= 1
+    end
   end
 
   def turn_end
@@ -96,7 +116,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def calc_start_turn
     @action_pt = 1
     calc_growth
-    calc_great_person
     calc_research
     calc_culture
     calc_production
@@ -105,22 +124,27 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def calc_end_turn
     @archive += @log
     @log = []
+    @culture_pt += @temp_culture_pt
     calc_end_turn_tech
     calc_end_turn_product
-
+    calc_end_turn_growth
+    calc_great_person
   end
 
   def calc_growth
-    pt = sum_point(:growth)
-    if pt >= @growth_level*4-2
-      @great_person_pt += pt - (@growth_level*4-2)
-      pt -= (@growth_level*4-2)
+    @growth_pt = sum_point(:growth)
+  end
+
+  def calc_end_turn_growth
+    if @growth_pt >= @growth_level*4-2
+      @great_person_pt += @growth_pt - (@growth_level*4-2)
       @growth_level += 1
       add_log("成長レベルが上がった！")
     else
-      @great_person_pt += pt
+      @great_person_pt += @growth_pt
     end
-    @growth_pt = pt
+    @growth_pt = 0
+
   end
 
   def calc_great_person
@@ -131,16 +155,16 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_research
-    @temp_research_pt += sum_point(:science)
+    @temp_research_pt = sum_point(:science)
   end
 
   def calc_culture
-    @culture_pt += sum_point(:culture)
+    @temp_culture_pt = sum_point(:culture)
   end
 
   def calc_production
-    @production_pt += sum_point(:production)
-    @const_pt += sum_point(:construction)
+    @production_pt = sum_point(:production)
+    @const_pt = sum_point(:construction)
   end
 
   def selectable_turn_end?
@@ -173,7 +197,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
+    [[:authority,1],[:authority,1],[:authority,1],[:authority,1],[:authority,1],[:authority,1]].each do |sym,n|
+#    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end
     return array
