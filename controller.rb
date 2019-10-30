@@ -34,9 +34,16 @@ class Controller
   end
 
   def click_on_game
-    @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
-    @game.click_hand(pos_hand) if pos_hand
+
+    if @game.click_mode
     
+    else
+      @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
+    end
+    
+    @game.click_hand(pos_hand) if pos_hand
+
+    # 技術選択画面か生産選択画面に行く
     if @game.view_status == :main_view
       if pos_bottom == :tech_panel
         @game.view_status = :tech_view

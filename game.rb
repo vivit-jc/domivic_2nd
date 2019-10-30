@@ -74,21 +74,28 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
       end
       return
     end
+
     card = @hand[pos]
     return unless card.action?
+    return if @action_pt == 0
+
     case card.kind
     when :authority
       @click_mode = :select_hand
       @action_card = {card: card,n: card.num}
-      add_log("除外するカードを選んでください")
+      add_log("除外するカードを選んでください(#{card.num})")
     when :trade
-
+      draw_card(card.num)
     end
+    @action_pt -= 1
     
   end
 
   def action_effect(pos)
-    if @action_card.kind == :authority
+    case @action_card[:card].kind 
+    when :authority
+      card = @hand[pos].name
+      add_log("#{card}を除外しました")
       @hand.delete_at(pos)
       @action_card[:n] -= 1
     end
@@ -99,13 +106,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     while(@hand.size > 0)
       @trash.push @hand.pop
     end
-    (@growth_level+2).times do 
-      @hand.push @deck.pop
-      if @deck.size == 0
-        @deck = @trash.shuffle
-        @trash = []
-      end
-    end
+
+    # 山札の枚数が成長レベル+2より少ない場合は全部引く
+    draw_card([@trash.size+@deck.size,@growth_level+2].min)
+
     @turn += 1
     calc_start_turn
 
@@ -191,13 +195,23 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @log.push str
   end
 
+  def draw_card(num)
+    num.times do 
+      if @deck.size == 0
+        @deck = @trash.shuffle
+        @trash = []
+      end
+      @hand.push @deck.pop
+    end
+  end
+
   def push_space
 
   end
 
   def init_deck
     array = []
-    [[:authority,1],[:authority,1],[:authority,1],[:authority,1],[:authority,1],[:authority,1]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:construction,1],[:authority,1]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

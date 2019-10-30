@@ -88,12 +88,12 @@ class View
     @game.hand.each_with_index do |card,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
-      Window.draw(x,y,card.action? ? @actioncardback : @cardback)
+      back = (card.action? and @game.action_pt > 0) ? @actioncardback : @cardback
+      Window.draw(x,y,back)
       Window.draw(x+2,y+2,Image[card.kind])
-      Window.draw_font(x+45,y+3,"★",Font12) if @game.action_pt > 0 and card.action?
+      Window.draw_font(x+45,y+3,"★",Font12) if card.action? and @game.action_pt > 0
       Window.draw_font(x+2,y+38,card.name,Font16)
     end
-    
   end
 
   def draw_units
