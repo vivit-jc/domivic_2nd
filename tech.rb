@@ -1,7 +1,8 @@
 module Tech
 
   def calc_end_turn_tech
-    @tech_prog[@selected_tech] += @temp_research_pt
+    @tech_prog[@selected_tech] += @temp_research_pt + @coin_pt[:science]
+    @coin_pt[:science] = 0
     # 研究完了処理
     if tech_finished?(@selected_tech)
       add_log("研究完了: "+tech_j(@selected_tech))

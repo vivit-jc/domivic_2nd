@@ -10,8 +10,8 @@ include Product
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :action_pt,
-  :target, :click_mode
+  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
+  :action_pt, :target, :click_mode
 
   def initialize
     @status = :title
@@ -50,6 +50,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @culture_pt = 0
     @production_pt = 0
     @const_pt = 0
+    @coin_pt = {science: 0,production: 0,growth: 0,culture: 0}
 
     @era_score = 0
 
@@ -185,11 +186,24 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def sum_point(kind)
     array = @hand.select{|e|e.kind == kind}.map{|e|e.num}
     return 0 if array.size == 0
-    return array.inject{|sum,n|sum+n}
+    return array.inject{|sum,n|sum+n} + @coin_pt[kind]
   end
 
   def add_log(str)
     @log.push str
+  end
+
+  def use_coin(sym)
+    # TODO コインが0枚の時に使えないようにする　現在はテスト用に制限なく使える
+    # 既に充分な研究・生産ポイントがある場合はコインは使えない
+    case(sym)
+    when :science
+      return false if @tech_prog[@selected_tech]+@temp_research_pt+@coin_pt[sym] >= tech_cost(@selected_tech)
+    when :production
+      return false if get_product_prog(@selected_tech)+get_product_and_const_pt(@selected_product)+@coin_pt[sym] >= product_cost(@selected_product)
+    end
+    @coin_pt[sym] += 1
+    @coin -= 1
   end
 
   def draw_card(num)

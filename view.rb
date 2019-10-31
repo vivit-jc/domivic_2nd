@@ -150,10 +150,11 @@ class View
 
   def draw_bottom
     #make_bottom_panel(160,70,:tech_panel,@tech_panel_back)
+    research_pt = @game.tech_prog[@game.selected_tech] + @game.temp_research_pt + @game.coin_pt[:science] if @game.selected_tech 
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y,@tech_panel_back)
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+5,@game.selected_tech ? Image[@game.selected_tech] : Image[:science])
     Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+3,selected_tech_j,Font16)
-    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{@game.tech_prog[@game.selected_tech]+@game.temp_research_pt}/#{@game.tech_cost(@game.selected_tech)}",Font16) if @game.selected_tech    
+    Window.draw_font(RIGHT_SIDE_WIDTH+50,BOTTOM_Y+21,"#{research_pt}/#{@game.tech_cost(@game.selected_tech)}",Font16) if @game.selected_tech    
     Window.draw(RIGHT_SIDE_WIDTH+5,BOTTOM_Y+52,@research_gage)
 
     if @game.selected_tech
@@ -258,7 +259,7 @@ class View
     (@game.archive+@game.log).reverse.each_with_index do |text,i|
       Window.draw_font(10, 10+i*18, text, Font16)
     end
-    Window.draw_font(100, 460, "クリックで戻ります", Font16)
+    Window.draw_font(300, 460, "クリックで戻ります", Font16)
   end
 
   def draw_message(str_array)
@@ -305,13 +306,13 @@ class View
     tech = @game.selected_tech
     if tech
       @research_gage = Image.new(150,10)
-      @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt)*150/@game.tech_cost(tech),10,C_GREEN)
+      @research_gage.box_fill(0,0,(@game.tech_prog[tech]+@game.temp_research_pt+@game.coin_pt[:science])*150/@game.tech_cost(tech),10,C_GREEN)
     end
 
     product = @game.selected_product
     if product
       @production_gage = Image.new(150,10)
-      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product))*150/@game.product_cost(product),10,C_GREEN)
+      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product)+@game.coin_pt[:production])*150/@game.product_cost(product),10,C_GREEN)
     end
 
   end
@@ -327,7 +328,7 @@ class View
   def make_production_str
     product = @game.selected_product
     return "" unless product
-    str = (@game.get_product_and_const_pt(product)+@game.get_product_prog(product)).to_s
+    str = (@game.get_product_and_const_pt(product)+@game.get_product_prog(product)+@game.coin_pt[:production]).to_s
     str += "/"+@game.product_cost(product).to_s
     return str
   end

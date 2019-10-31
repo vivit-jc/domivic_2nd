@@ -28,14 +28,15 @@ module Product
   	product = @selected_product
   	if product.class == Array
   	  @product_prog[product[0]] = Array.new(10,0) unless @product_prog[product[0]]
-  	  @product_prog[product[0]][product[1]] += @production_pt
+  	  @product_prog[product[0]][product[1]] += @production_pt + @coin_pt[:production]
   	else
   	  @product_prog[product] = 0 unless @product_prog[product]
-      @product_prog[product] += get_product_and_const_pt(product)
+      @product_prog[product] += get_product_and_const_pt(product) + @coin_pt[:production]
   	end
 
     @production_pt = 0
     @const_pt = 0
+    @coin_pt[:production] = 0
 
   	if production_finished?(product)
   	  add_log("生産完了: "+product_j(@selected_product))

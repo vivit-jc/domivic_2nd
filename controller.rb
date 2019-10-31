@@ -43,7 +43,7 @@ class Controller
 
     @game.click_hand(pos_hand) if pos_hand and @game.view_status == :main_view
 
-    # 技術選択画面か生産選択画面に行く
+    # 技術選択画面か生産選択画面に行く、研究・生産へのコインの使用
     if @game.view_status == :main_view
       case(pos_bottom)
       when :tech_panel
@@ -52,6 +52,10 @@ class Controller
       when :const_panel
         @game.view_status = :product_view
         return
+      when :tech_coin
+        @game.use_coin(:science)
+      when :product_coin
+        @game.use_coin(:production)
       when :log
         @game.view_status = :log_view
         return        
