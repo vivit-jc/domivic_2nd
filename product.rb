@@ -31,11 +31,10 @@ module Product
   	  @product_prog[product[0]][product[1]] += @production_pt + @coin_pt[:production]
   	else
   	  @product_prog[product] = 0 unless @product_prog[product]
-      @product_prog[product] += get_product_and_const_pt(product) + @coin_pt[:production]
+      @product_prog[product] += @production_pt + @coin_pt[:production]
   	end
 
     @production_pt = 0
-    @const_pt = 0
     @coin_pt[:production] = 0
 
   	if production_finished?(product)
@@ -89,14 +88,6 @@ module Product
   	return mes
   end
 
-  def get_product_and_const_pt(obj)
-  	if obj.class == Array or UNITDATA[obj]
-  	  return @production_pt
-  	else
-  	  return @production_pt + @const_pt
-  	end
-  end
-
   def get_product_prog(obj)
   	if obj.class == Array 
   	  if !@product_prog[obj[0]]
@@ -119,7 +110,9 @@ module Product
   	elsif unit = UNITDATA[obj]
   	  return unit.cost
   	elsif bldg = BLDGDATA[obj]
-  	  return bldg.cost
+  	  cost_down = 0
+  	  cost_down += 10 if tech_finished?(:masonry)
+  	  return (bldg.cost*(100-cost_down)/100).floor
   	end
   end
 

@@ -204,7 +204,6 @@ class View
     @tech_array.reverse.each_with_index do |t,i|
       draw_tech_view_row(t,50+(i%2)*20,10+50*i)
     end
-
     # マウスオーバーで説明を表示
     pos_tech = @controller.pos_tech_view
     if pos_tech and pos_tech != :back
@@ -232,17 +231,17 @@ class View
     @game.unlocked_products[:cards].each_with_index do |p,i|
       card = CARDDATA[p[0]]
       Window.draw_font(10, 35+18*i, card.name+p[1].to_s, Font16)
-      Window.draw_font(80, 35+18*i, card.cost[p[1]], Font16)
+      Window.draw_font(80, 35+18*i, @game.product_cost(p), Font16)
     end
     @game.unlocked_products[:bldgs].each_with_index do |p,i|
       bldg = BLDGDATA[p]
       Window.draw_font(130, 35+18*i, bldg.name, Font16)
-      Window.draw_font(200, 35+18*i, bldg.cost, Font16)      
+      Window.draw_font(200, 35+18*i, @game.product_cost(p), Font16)      
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
       unit = UNITDATA[p]
       Window.draw_font(250, 35+18*i, unit.name, Font16)
-      Window.draw_font(320, 35+18*i, unit.cost, Font16)
+      Window.draw_font(320, 35+18*i, @game.product_cost(p), Font16)
     end
 
     # マウスオーバーで説明を表示
@@ -312,7 +311,7 @@ class View
     product = @game.selected_product
     if product
       @production_gage = Image.new(150,10)
-      @production_gage.box_fill(0,0,(@game.get_product_and_const_pt(product)+@game.get_product_prog(product)+@game.coin_pt[:production])*150/@game.product_cost(product),10,C_GREEN)
+      @production_gage.box_fill(0,0,(@game.production_pt+@game.get_product_prog(product)+@game.coin_pt[:production])*150/@game.product_cost(product),10,C_GREEN)
     end
 
   end
@@ -328,7 +327,7 @@ class View
   def make_production_str
     product = @game.selected_product
     return "" unless product
-    str = (@game.get_product_and_const_pt(product)+@game.get_product_prog(product)+@game.coin_pt[:production]).to_s
+    str = (@game.production_pt+@game.get_product_prog(product)+@game.coin_pt[:production]).to_s
     str += "/"+@game.product_cost(product).to_s
     return str
   end

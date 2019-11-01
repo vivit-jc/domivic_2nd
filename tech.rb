@@ -88,10 +88,11 @@ module Tech
       ["finish_card","カードを取得: "],
       ["unlock_card","カードを解禁: "],
       ["unlock_bldg","建物を解禁: "],
-      ["unlock_unit","ユニットを解禁: "]
+      ["unlock_unit","ユニットを解禁: "],
+      ["effect","効果: "]
     ].each do |e,j|
-      if obj = TECHDATA[sym.to_s][e]
-        mes.push j+obj.to_s
+      if TECHDATA[sym.to_s][e]
+        mes.push j+TECHDATA[sym.to_s][e].to_s
       end
     end
     return mes

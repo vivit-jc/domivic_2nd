@@ -9,7 +9,7 @@ include Product
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
-  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :const_pt, :selected_tech, :selected_product,
+  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
   :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
   :action_pt, :target, :click_mode
 
@@ -49,7 +49,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @temp_research_pt = 0
     @culture_pt = 0
     @production_pt = 0
-    @const_pt = 0
     @coin_pt = {science: 0,production: 0,growth: 0,culture: 0}
 
     @era_score = 0
@@ -166,7 +165,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def calc_production
     @production_pt = sum_point(:production)
-    @const_pt = sum_point(:construction)
   end
 
   def selectable_turn_end?
@@ -200,7 +198,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     when :science
       return false if @tech_prog[@selected_tech]+@temp_research_pt+@coin_pt[sym] >= tech_cost(@selected_tech)
     when :production
-      return false if get_product_prog(@selected_tech)+get_product_and_const_pt(@selected_product)+@coin_pt[sym] >= product_cost(@selected_product)
+      return false if get_product_prog(@selected_tech)+@production_pt+@coin_pt[sym] >= product_cost(@selected_product)
     end
     @coin_pt[sym] += 1
     @coin -= 1

@@ -21,7 +21,7 @@
 			"unlock_bldg":["shrine"]
 		},
 		"masonry":{
-			"finish_card":[["construction",3]],
+			"effect":"すべての建物のコスト-10%",
 			"unlock_unit":["walls"]
 		},
 		"monarchy":{
