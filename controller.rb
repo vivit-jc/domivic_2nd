@@ -36,7 +36,10 @@ class Controller
   def click_on_game
 
     if @game.click_mode
-    
+      if @game.click_mode == :select_invasion_bonus
+        @game.click_bonus(pos_bonus) if pos_bonus
+        return
+      end
     else
       @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
     end
@@ -103,6 +106,13 @@ class Controller
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
       return i if mcheck(x,y,x+50,y+50)
+    end
+    return false
+  end
+
+  def pos_bonus
+    6.times do |i|
+      return i if mcheck(RIGHT_SIDE_WIDTH,5+i*22,440,5+i*22+20)
     end
     return false
   end

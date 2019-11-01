@@ -46,7 +46,7 @@ Font60 = Font.new(60)
 Font100 = Font.new(100)
 
 IMAGES = [:science, :production, :culture, :growth, :deck, :trash, :emblem, :greatperson, :authority, :stagnation, :swordman, :inheritance,
-:trade, :construction, :warrior, :horseman, :walls, :archer, :catapult, :money_bag, :coin, :coin_l]
+:trade, :construction, :warrior, :horseman, :walls, :archer, :catapult, :money_bag, :coin, :coin_l, :invasion]
 
 TECH_1 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:metal_working,"金属加工"],[:mythology,"神話"],[:masonry,"石工術"]]
 TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
@@ -80,7 +80,7 @@ Window.load_resources do
   BLDGDATA = DATA[:product][:bldg]
   CARDDATA = DATA[:product][:card]
   UNITDATA = DATA[:product][:unit]
-  PROVINCEDATA = DATA[:province]
+  BONUSDATA = DATA[:invasion_bonus]
 
   game = Game.new
   controller = Controller.new(game)

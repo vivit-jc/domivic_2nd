@@ -213,11 +213,6 @@
 				"text":"アクション: 数字の枚数追加で引く",
 				"action":true
 			},
-			"construction":{
-				"name":"建築",
-				"cost":[5,10,15,20],
-				"text":"建物のみに使える"
-			},
 			"invasion":{
 				"name":"侵攻",
 				"cost":[5,10,15,20],
@@ -270,9 +265,9 @@
 			}
 		}
 	},
-	"province":[
+	"invasion_bonus":[
 		["get_province,1","get_coin,4"],
-		["get_province,1","get_coin,3","down_threat,2"],
+		["get_province,1","get_coin,3","down_threat,4"],
 		["get_province,1","get_coin,3","get_great_general,1"]
 	]
 }

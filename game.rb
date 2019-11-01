@@ -1,17 +1,19 @@
 require_remote './card.rb'
 require_remote './tech.rb'
 require_remote './product.rb'
+require_remote './click.rb'
 
 class Game
 
 include Tech
 include Product
+include Click
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
   :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
-  :action_pt, :target, :click_mode
+  :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province
 
   def initialize
     @status = :title
@@ -32,9 +34,12 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @deck = init_deck.shuffle
     @hand = [@deck.pop,@deck.pop,@deck.pop]
     @trash = []
+    @inheritance = []
     @buildings = []
-    @units = []
+    @units = [:warrior]
+    @invasion_bonus = BONUSDATA
     @coin = 0
+    @threat = 1
 
     @selected_tech = nil
     @selected_product = nil
@@ -49,7 +54,9 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @temp_research_pt = 0
     @culture_pt = 0
     @production_pt = 0
-    @coin_pt = {science: 0,production: 0,growth: 0,culture: 0}
+    @coin_pt = {science: 0, production: 0, growth: 0, culture: 0}
+    @province = 0
+    @province_pt = {science: 0, production: 0, growth: 1, culture: 0}
 
     @era_score = 0
 
@@ -65,42 +72,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @status = :game
   end
 
-  def click_hand(pos)
-    if @click_mode == :select_hand
-      action_effect(pos)
-      if @action_card[:n] == 0
-        @click_mode = nil
-        @action_card = nil
-      end
-      return
-    end
-
-    card = @hand[pos]
-    return unless card.action?
-    return if @action_pt == 0
-
-    case card.kind
-    when :authority
-      @click_mode = :select_hand
-      @action_card = {card: card,n: card.num}
-      add_log("除外するカードを選んでください(#{card.num})")
-    when :trade
-      draw_card(card.num)
-    end
-    @action_pt -= 1
-    
-  end
-
-  def action_effect(pos)
-    case @action_card[:card].kind 
-    when :authority
-      card = @hand[pos].name
-      add_log("#{card}を除外しました")
-      @hand.delete_at(pos)
-      @action_card[:n] -= 1
-    end
-  end
-
   def turn_end
     calc_end_turn
     while(@hand.size > 0)
@@ -109,6 +80,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
     # 山札の枚数が成長レベル+2より少ない場合は全部引く
     draw_card([@trash.size+@deck.size,@growth_level+2].min)
+    @hand += @inheritance
+    @inheritance = []
 
     @turn += 1
     calc_start_turn
@@ -184,7 +157,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def sum_point(kind)
     array = @hand.select{|e|e.kind == kind}.map{|e|e.num}
     return 0 if array.size == 0
-    return array.inject{|sum,n|sum+n} + @coin_pt[kind]
+    return array.inject{|sum,n|sum+n} + @coin_pt[kind] + get_province_pt(kind)
   end
 
   def add_log(str)
@@ -227,9 +200,21 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   end
 
+  def get_province_pt(kind)
+    return @privince * @province_pt[kind]
+  end
+
+  def get_att
+    return @units.map{|u|UNITDATA[u].att}.inject{|sum,n|sum+n}
+  end
+
+  def get_def
+    return @units.map{|u|UNITDATA[u].def}.inject{|sum,n|sum+n}
+  end
+
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:science,1],[:science,1]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:inheritance,1],[:invasion,1]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

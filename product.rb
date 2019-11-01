@@ -107,12 +107,12 @@ module Product
   def product_cost(obj)
   	if obj.class == Array
   	  return CARDDATA[obj[0]].cost[obj[1]]
-  	elsif unit = UNITDATA[obj]
-  	  return unit.cost
-  	elsif bldg = BLDGDATA[obj]
+  	elsif UNITDATA[obj]
+  	  return UNITDATA[obj].cost
+  	elsif BLDGDATA[obj]
   	  cost_down = 0
   	  cost_down += 10 if tech_finished?(:masonry)
-  	  return (bldg.cost*(100-cost_down)/100).floor
+  	  return (BLDGDATA[obj].cost*(100-cost_down)/100).round
   	end
   end
 

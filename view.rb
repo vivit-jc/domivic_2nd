@@ -87,6 +87,13 @@ class View
   end
 
   def draw_hand
+    if @game.click_mode == :select_invasion_bonus
+      @game.invasion_bonus[0].each_with_index do |e,i|
+        Window.draw_font(RIGHT_SIDE_WIDTH,5+i*22,make_bonus_str(i),Font20)
+      end
+      return
+    end
+    
     @game.hand.each_with_index do |card,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
@@ -138,8 +145,8 @@ class View
     Window.draw_font(LEFT_SIDE_X+20,5,"【太古】",Font28)
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
     Window.draw_font(LEFT_SIDE_X,62,"時代スコア #{@game.era_score}",Font20)
-    Window.draw_font(LEFT_SIDE_X,84,"属州 2",Font20)
-    Window.draw_font(LEFT_SIDE_X,106,"脅威Lv 2",Font20)
+    Window.draw_font(LEFT_SIDE_X,84,"属州 #{@game.province}",Font20)
+    Window.draw_font(LEFT_SIDE_X,106,"脅威Lv #{@game.threat}",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
     if @game.selectable_turn_end?
       Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) 
@@ -330,6 +337,20 @@ class View
     str = (@game.production_pt+@game.get_product_prog(product)+@game.coin_pt[:production]).to_s
     str += "/"+@game.product_cost(product).to_s
     return str
+  end
+
+  def make_bonus_str(pos)
+    if @game.click_mode == :select_invasion_bonus
+      ele = @game.invasion_bonus[0][pos].split(",")
+      case(ele[0])
+      when "get_province"
+        return "属州を得る(#{ele[1]})"
+      when "get_coin"
+        return "コインを得る(#{ele[1]})"
+      when "down_threat"
+        return "脅威Lvを下げる(#{ele[1]})"
+      end
+    end
   end
 
   def draw_xy
