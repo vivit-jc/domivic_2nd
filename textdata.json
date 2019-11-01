@@ -55,6 +55,84 @@
 		"horse_riding":{
 			"unlock_unit":["horseman"],
 			"unlock_bldg":["stable"]
+		},
+		"chivalry":{
+
+		},
+		"education":{
+
+		},
+		"metal_casting":{
+
+		},
+		"music":{
+
+		},
+		"machinery":{
+
+		},
+		"guilds":{
+
+		},
+		"gunpowder":{
+
+		},
+		"printing_press":{
+
+		},
+		"navigation":{
+
+		},
+		"nationalism":{
+
+		},
+		"banking":{
+
+		},
+		"military_science":{
+
+		},
+		"philosophy":{
+
+		},
+		"physics":{
+
+		},
+		"steam_power":{
+
+		},
+		"steel":{
+
+		},
+		"biology":{
+
+		},
+		"corporation":{
+
+		},
+		"assembly_line":{
+
+		},
+		"electricity":{
+
+		},
+		"computers":{
+
+		},
+		"flight":{
+
+		},
+		"fission":{
+
+		},
+		"radio":{
+
+		},
+		"mass_media":{
+
+		},
+		"plastics":{
+
 		}
 	},
 	"product":{
@@ -191,5 +269,10 @@
 				"utype":"siege"
 			}
 		}
-	}
+	},
+	"province":[
+		["get_province,1","get_coin,4"],
+		["get_province,1","get_coin,3","down_threat,2"],
+		["get_province,1","get_coin,3","get_great_general,1"]
+	]
 }
