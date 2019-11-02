@@ -5,7 +5,14 @@ module Tech
     @coin_pt[:science] = 0
     # 研究完了処理
     if tech_finished?(@selected_tech)
-      add_log("研究完了: "+tech_j(@selected_tech))
+      str = "研究完了: "+tech_j(@selected_tech)
+      # 時代スコアのチェックとログ表示
+      score = get_era_mission("research_tech")
+      if score and score[1].to_i == tech_era(@selected_tech)
+        str += " 時代スコア+#{score[2]}"
+        @era_score += score[2].to_i
+      end
+      add_log(str)
       # 研究ポイントの溢れ処理
       @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)

@@ -142,7 +142,7 @@ class View
   end
 
   def draw_leftside
-    Window.draw_font(LEFT_SIDE_X+20,5,"【太古】",Font28)
+    Window.draw_font(LEFT_SIDE_X+20,5,"【#{era_j}】",Font28)
     Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
     Window.draw_font(LEFT_SIDE_X,62,"時代スコア #{@game.era_score}",Font20)
     Window.draw_font(LEFT_SIDE_X,84,"属州 #{@game.province}",Font20)
@@ -206,6 +206,7 @@ class View
   end
 
   def draw_tech_view
+    p "draw_tech_view"
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
     @tech_array.reverse.each_with_index do |t,i|
@@ -228,6 +229,7 @@ class View
   end
 
   def draw_product_view
+    p "draw_product_view"
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+75,BOTTOM_Y+52,"戻る",Font16)
 
@@ -351,6 +353,10 @@ class View
         return "脅威Lvを下げる(#{ele[1]})"
       end
     end
+  end
+
+  def era_j
+    return ["太古","古代","中世","ルネサンス","工業化時代","現代"][@game.era]
   end
 
   def draw_xy

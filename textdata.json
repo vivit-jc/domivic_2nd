@@ -269,5 +269,9 @@
 		["get_province,1","get_coin,4"],
 		["get_province,1","get_coin,3","down_threat,4"],
 		["get_province,1","get_coin,3","get_great_general,1"]
+	],
+	"era_mission":[
+		["build_unit,1","build_bldg,2","research_tech,1,3","culture,10,2"],
+		["success_invasion,1","research_tech,2,2","build_wonder,3","culture,20,2"]
 	]
 }

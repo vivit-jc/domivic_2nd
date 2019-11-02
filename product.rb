@@ -38,7 +38,7 @@ module Product
     @coin_pt[:production] = 0
 
   	if production_finished?(product)
-  	  add_log("生産完了: "+product_j(@selected_product))
+  	  str = "生産完了: "+product_j(@selected_product)
   	  if product.class == Array
   	    @production_pt += @product_prog[product[0]][product[1]] - product_cost(product)
   	    @trash.push Card.new(product[0],product[1])
@@ -46,12 +46,23 @@ module Product
   	  else
   	    @production_pt += @product_prog[product] - product_cost(product)
   	    if BLDGDATA[product]
+          score = get_era_mission("build_bldg")
+          if score
+            str += " 時代スコア+#{score[1]}"
+            @era_score += score[1].to_i
+          end
   	      @buildings.push product
   	    elsif UNITDATA[product]
-		  @units.push product
-		  @product_prog[product] = 0
+          score = get_era_mission("build_unit")
+          if score
+            str += " 時代スコア+#{score[1]}"
+            @era_score += score[1].to_i
+          end
+		      @units.push product
+		      @product_prog[product] = 0
   	    end
   	  end
+      add_log(str)
   	  @selected_product = nil
   	end
 

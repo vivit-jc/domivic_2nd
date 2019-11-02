@@ -12,7 +12,7 @@ include Click
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
-  :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
+  :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
   :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province
 
   def initialize
@@ -58,6 +58,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @province = 0
     @province_pt = {science: 0, production: 0, growth: 1, culture: 0}
 
+    @era = 0
     @era_score = 0
 
     @log = []
@@ -201,7 +202,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def get_province_pt(kind)
-    return @privince * @province_pt[kind]
+    return @province * @province_pt[kind]
   end
 
   def get_att
@@ -210,6 +211,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def get_def
     return @units.map{|u|UNITDATA[u].def}.inject{|sum,n|sum+n}
+  end
+
+  def get_era_mission(str)
+    return ERAMISSION[@era].map{|e|e.split(",")}.find{|e|e[0] == str}
   end
 
   def init_deck

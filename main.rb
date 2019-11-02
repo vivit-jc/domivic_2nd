@@ -81,6 +81,7 @@ Window.load_resources do
   CARDDATA = DATA[:product][:card]
   UNITDATA = DATA[:product][:unit]
   BONUSDATA = DATA[:invasion_bonus]
+  ERAMISSION = DATA[:era_mission]
 
   game = Game.new
   controller = Controller.new(game)
