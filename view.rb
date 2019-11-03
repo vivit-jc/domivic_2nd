@@ -20,6 +20,7 @@ class View
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
     @deckinfoback = Image.new(60,480)
     @trashinfoback = Image.new(60,480)
+    @erainfoback = Image.new(310,480)
 
     @tech_array = @game.tech_array
     @flat_tech_array = @game.flat_tech_array
@@ -81,6 +82,7 @@ class View
       draw_units
       draw_bottom
       draw_rightside_info
+      draw_leftside_info
       draw_log
     end
 
@@ -153,6 +155,7 @@ class View
     else
       Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,@game.need_to_turn_end_mes,Font16,{color: C_BLACK}) 
     end
+
   end
 
   def draw_bottom
@@ -199,6 +202,23 @@ class View
     end
   end
 
+  def draw_leftside_info
+    case(@controller.pos_leftside)
+    when :era_score
+      Window.draw(Input.mouse_x-310,Input.mouse_y,@erainfoback)
+      ERAMISSION[@game.era].each_with_index do |c,i|
+        Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*i,make_erainfo_str(c),Font16)
+      end
+      bonus = ERABONUS[@game.era]
+      [bonus[0].to_i-1,bonus[0],bonus[1]].each_with_index do |e,i|
+        pri = i == 0 ? "以下" : "以上"
+        pri = "以上でさらに" if i == 2
+        Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*(i*2+5),e.to_s+pri,Font16)
+        Window.draw_font(Input.mouse_x-300,Input.mouse_y+3+18*(i*2+6),make_erabonus_str(i),Font16)
+      end
+    end
+  end
+
   def draw_log
     @game.log.each_with_index do |l,i|
       Window.draw_font(RIGHT_SIDE_WIDTH,BOTTOM_Y-18*i-20,l,Font16)
@@ -206,7 +226,6 @@ class View
   end
 
   def draw_tech_view
-    p "draw_tech_view"
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
     @tech_array.reverse.each_with_index do |t,i|
@@ -229,11 +248,10 @@ class View
   end
 
   def draw_product_view
-    p "draw_product_view"
     Window.draw(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+75,BOTTOM_Y+52,"戻る",Font16)
 
-    Window.draw_font(10, 10, "タイル", Font20)
+    Window.draw_font(10, 10, "カード", Font20)
     Window.draw_font(130, 10, "建物", Font20)
     Window.draw_font(250, 10, "ユニット", Font20)
 
@@ -301,8 +319,10 @@ class View
   def refresh_back
     @deckinfoback = Image.new(60,480)
     @trashinfoback = Image.new(60,480)
-    @deckinfoback.box_fill(0,0,60,@game.deck.size*18,DARKGRAY) if @game.deck.size > 0
-    @trashinfoback.box_fill(0,0,60,@game.trash.size*18,DARKGRAY) if @game.trash.size > 0
+    @erainfoback = Image.new(310,480)
+    @deckinfoback.box_fill(0,0,60,@game.deck.size*18+6,DARKGRAY) if @game.deck.size > 0
+    @trashinfoback.box_fill(0,0,60,@game.trash.size*18+6,DARKGRAY) if @game.trash.size > 0
+    @erainfoback.box_fill(0,0,310,(ERAMISSION[@game.era].size+7)*18+6,DARKGRAY)
   end
 
   def refresh_gages
@@ -353,6 +373,38 @@ class View
         return "脅威Lvを下げる(#{ele[1]})"
       end
     end
+  end
+
+  def make_erainfo_str(array)
+    array = array.split(",")
+    case array[0]
+    when "research_tech"
+      return "世代#{array[2].to_i+1}の技術を研究する: +#{array[1]}"
+    when "build_unit"
+      return "ユニットを生産する: +#{array[1]}"
+    when "build_bldg"
+      return "建物を生産する: +#{array[1]}"
+    when "success_invasion"
+      return "侵攻に成功する: +#{array[1]}"
+    when "culture"
+      return "文化を#{array[2]}以上にする: +#{array[1]}"
+    end
+  end
+
+  def make_erabonus_str(i)
+    array = ERABONUS[@game.era][i+2]
+    str = ""
+    array.each do |e|
+      if e =~ /add_card\((.*)\)/
+        card = $1.split(",")
+        str += "カードを得る(#{CARDDATA[card[0].delete(":")].name}"
+        str += card[1] if card[1] != "0"
+        str += ") "
+      elsif e =~ /add_coin\((\d*)\)/
+        str += "#{$1}コインを得る "
+      end
+    end
+    return str
   end
 
   def era_j

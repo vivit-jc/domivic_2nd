@@ -56,9 +56,18 @@ class Controller
         @game.view_status = :product_view
         return
       when :tech_coin
-        @game.use_coin(:science)
+        if @game.selected_tech
+          @game.use_coin(:science) 
+        else
+          @game.view_status = :tech_view
+        end
+        return
       when :product_coin
-        @game.use_coin(:production)
+        if @game.selected_product
+          @game.use_coin(:production)
+        else
+          @game.view_status = :product_view
+        end
       when :log
         @game.view_status = :log_view
         return        
@@ -125,6 +134,7 @@ class Controller
   def pos_leftside
     d_width = 0
     d_height = 0
+    return :era_score if mcheck(LEFT_SIDE_X,62,640,82)
     [[170,70,:turn_end]].each do |width, height, sym|
       d_width += width
       d_height += height

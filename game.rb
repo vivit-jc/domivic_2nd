@@ -213,8 +213,12 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     return @units.map{|u|UNITDATA[u].def}.inject{|sum,n|sum+n}
   end
 
-  def get_era_mission(str)
-    return ERAMISSION[@era].map{|e|e.split(",")}.find{|e|e[0] == str}
+  def calc_era_mission(str)
+    score = ERAMISSION[@era].map{|e|e.split(",")}.find{|e|e[0] == str}
+    return "" unless score
+    return "" if str == "research_tech" and score[2].to_i != tech_era(@selected_tech)
+    @era_score += score[1].to_i
+    return " 時代スコア +#{score[1]}"
   end
 
   def init_deck

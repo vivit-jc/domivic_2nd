@@ -8,6 +8,7 @@ attr_reader :num, :kind, :name
   end
 
   def make_name
+    return CARDDATA[@kind].name if @num == 0
   	return CARDDATA[@kind].name+@num.to_s
   end
 

@@ -27,7 +27,9 @@ module Click
       add_log("次のターンに送るカードを選んでください(#{card.num})")
     when :invasion
       if get_att > @threat
-        add_log("攻撃に成功！　報酬を選んでください")
+        score_str = calc_era_mission("success_invasion")
+        add_log("攻撃に成功！"+score_str)
+        add_log("報酬を選んでください")
         @click_mode = :select_invasion_bonus
         @threat += 2
       else
