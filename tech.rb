@@ -5,7 +5,6 @@ module Tech
     @coin_pt[:science] = 0
     # 研究完了処理
     if tech_finished?(@selected_tech)
-
       # 時代スコアのチェックとログ表示
       score_str = calc_era_mission("research_tech")
       add_log("研究完了: "+tech_j(@selected_tech)+score_str)
@@ -15,7 +14,7 @@ module Tech
       
       # 技術データが書きかけなので、無ければここでreturn あとで消す
       return unless TECHDATA[@selected_tech.to_s]
-      
+
       # 研究完了時にタイルがもらえる処理
       if cards = TECHDATA[@selected_tech.to_s]["finish_card"]
         cards.each do |t|
@@ -23,6 +22,7 @@ module Tech
           @trash.push card
         end
       end
+      
       @selected_tech = nil
     else
       @temp_research_pt = 0

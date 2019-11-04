@@ -254,22 +254,30 @@ class View
     Window.draw_font(10, 10, "カード", Font20)
     Window.draw_font(130, 10, "建物", Font20)
     Window.draw_font(250, 10, "ユニット", Font20)
+    Window.draw_font(370, 10, "世界遺産", Font20)
+
 
     @game.unlocked_products[:cards].each_with_index do |p,i|
       card = CARDDATA[p[0]]
       Window.draw_font(10, 35+18*i, card.name+p[1].to_s, Font16)
-      Window.draw_font(80, 35+18*i, @game.product_cost(p), Font16)
+      Window.draw_font(100, 35+18*i, @game.product_cost(p), Font16)
     end
     @game.unlocked_products[:bldgs].each_with_index do |p,i|
       bldg = BLDGDATA[p]
       Window.draw_font(130, 35+18*i, bldg.name, Font16)
-      Window.draw_font(200, 35+18*i, @game.product_cost(p), Font16)      
+      Window.draw_font(220, 35+18*i, @game.product_cost(p), Font16)      
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
       unit = UNITDATA[p]
       Window.draw_font(250, 35+18*i, unit.name, Font16)
-      Window.draw_font(320, 35+18*i, @game.product_cost(p), Font16)
+      Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16)
     end
+    @game.selectable_wonders.each_with_index do |p,i|
+      wonder = WONDERSDATA[p]
+      Window.draw_font(370, 35+18*i, wonder.name, Font16)
+      Window.draw_font(555, 35+18*i, @game.product_cost(p), Font16)
+    end
+
 
     # マウスオーバーで説明を表示
     pos_product = @controller.pos_product_view

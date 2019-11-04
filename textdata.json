@@ -21,23 +21,23 @@
 			"unlock_bldg":["shrine"]
 		},
 		"masonry":{
-			"effect":"すべての建物のコスト-10%",
+			"effect":"すべての建物、世界遺産のコスト-10%",
 			"unlock_unit":["walls"]
 		},
 		"monarchy":{
-			"finish_card":[["authority",1]],
-			"unlock_card":[["invasion",0]]
+			"finish_card":[["authority",1],["invasion",0]]
 		},
 		"mathematics":{
 			"finish_card":[["science",3]],
 			"unlock_unit":["catapult"]
 		},
 		"law":{
-			"finish_card":[["inheritance",1]]
+			"finish_card":[["inheritance",1]],
+			"unlock_card":[["authority",1]]
 		},
 		"construction":{
-			"finish_card":[["construction",4]],
-			"unlock_bldg":["workshop"]
+			"effect":"すべての世界遺産のコスト-10%",
+			"unlock_bldg":["aqueduct"]
 		},
 		"currency":{
 			"finish_card":[["trade",2]],
@@ -57,34 +57,39 @@
 			"unlock_bldg":["stable"]
 		},
 		"chivalry":{
-
+			"finish_card":[["trend",5]],
+			"unlock_unit":["knight"],
+			"unlock_card":[["invasion",0]]
 		},
 		"education":{
-
+			"finish_card":[["science",1],["science",2],["science",3]],
+			"unlock_bldg":["university"]
 		},
 		"metal_casting":{
-
+			"unlock_bldg":["forge"]
 		},
 		"music":{
-
+			"finish_card":[["trend",5],["trend",5]]
 		},
 		"machinery":{
-
+			"unlock_bldg":["workshop"]
 		},
 		"guilds":{
-
+			"unlock_bldg":["market"]
 		},
 		"gunpowder":{
-
+			"unlock_unit":["masket"]
 		},
 		"printing_press":{
-
+			"unlock_card":[["science",3],["culture",3],["inheritance",1]]
 		},
 		"navigation":{
-
+			"finish_card":[["trade",3]],
+			"unlock_card":[["trade",2]]
 		},
 		"nationalism":{
-
+			"finish_card":[["authority",2]],
+			"unlock_card":[["politics",0]]
 		},
 		"banking":{
 
@@ -140,12 +145,12 @@
 			"granary":{
 				"cost":	12,
 				"name": "穀物庫",
-				"text": "成長ptを追加で1ターン保持する。"
+				"text": "成長ptを追加で1ターン保持する"
 			},
 			"library":{
 				"cost": 12,
 				"name": "図書館",
-				"text": "考え中"
+				"text": "毎ターン、手札の研究カード1枚につき研究+1"
 			},
 			"barracks":{
 				"cost": 12,
@@ -155,27 +160,47 @@
 			"shrine":{
 				"cost": 12,
 				"name": "神殿",
-				"text": "考え中"				
+				"text": "カードが1枚除外されるたびに文化+3"
 			},
 			"workshop":{
 				"cost": 12,
 				"name": "工房",
-				"text": "考え中"
+				"text": "すべてのユニットのコスト-15%"
 			},
 			"trading_post":{
 				"cost": 12,
 				"name": "交易所",
-				"text": "考え中"
+				"text": "アクションカードを1枚使用するたびにコイン+1"
 			},
 			"temple":{
 				"cost": 12,
 				"name": "寺院",
-				"text": "考え中"
+				"text": "毎ターン、文化+2"
 			},
 			"stable":{
 				"cost": 12,
 				"name": "厩舎",
 				"text": "馬ユニットの待機上限+2"
+			},
+			"aqueduct":{
+				"cost": 12,
+				"name": "水道橋",
+				"text": "成長Lv上昇に必要な成長pt-25%"
+			},
+			"forge":{
+				"cost": 12,
+				"name": "溶鉱炉",
+				"text": "すべての建物、世界遺産、カード、ユニットのコスト-10%"
+			},
+			"market":{
+				"cost": 12,
+				"name": "市場",
+				"text": "カードが1枚除外されるたびにコイン+2"
+			},
+			"university":{
+				"cost": 12,
+				"name": "大学",
+				"text": "毎ターン、手札の研究カード1枚につき研究+2、文化+1"
 			}
 		},
 		"card":{
@@ -210,7 +235,7 @@
 			"trade":{
 				"name":"交易",
 				"cost":[5,10,15,20],
-				"text":"アクション: 数字の枚数追加で引く",
+				"text":"アクション: 数字の枚数追加で引き、その半数(切り上げ)に等しいコインを支払う",
 				"action":true
 			},
 			"invasion":{
@@ -221,7 +246,13 @@
 			},
 			"inspiration":{
 				"name":"ひらめき",
-				"cost":[5,10,15,20]
+				"cost":[5,10,15,20],
+				"instant":true
+			},
+			"trend":{
+				"name":"流行",
+				"cost":[],
+				"instant":true
 			},
 			"stagnation":{
 				"name":"停滞",
@@ -273,6 +304,72 @@
 			}
 		}
 	},
+	"wonders":{
+		"stone_henge":{
+			"name":"ストーン・ヘンジ",
+			"cost":10,
+			"text":"考え中",
+			"era":0
+		},
+		"pyramid":{
+			"name":"ピラミッド",
+			"cost":10,
+			"text":"考え中",
+			"era":0
+		},
+		"great_library":{
+			"name":"アレクサンドリア図書館",
+			"cost":10,
+			"text":"考え中",
+			"era":0
+		},
+		"great_wall":{
+			"name":"万里の長城",
+			"cost":10,
+			"text":"考え中",
+			"era":0
+		},
+		"temple_of_artemis":{
+			"name":"アルテミス神殿",
+			"cost":10,
+			"text":"考え中",
+			"era":0
+		},
+		"hanging_garden":{
+			"name":"空中庭園",
+			"cost":10,
+			"text":"考え中",
+			"era":1
+		},
+		"statue_of_zeus":{
+			"name":"ゼウス像",
+			"cost":10,
+			"text":"考え中",
+			"era":1
+		},
+		"great_lighthouse":{
+			"name":"ファロス灯台",
+			"cost":10,
+			"text":"考え中",
+			"era":1
+		},
+		"colossus_of_rhodes":{
+			"name":"ロードス島の巨神像",
+			"cost":10,
+			"text":"考え中",
+			"era":1
+		},
+		"tomb_of_mausolus":{
+			"name":"マウソロス霊廟",
+			"cost":10,
+			"text":"考え中",
+			"era":1
+		}
+	},
+	"wonders_list":[
+		["pyramid","stone_henge","great_library","great_wall","temple_of_artemis"],
+		["hanging_garden","colossus_of_rhodes","tomb_of_mausolus","great_lighthouse","statue_of_zeus"]
+	],
 	"invasion_bonus":[
 		["get_province,1","get_coin,4"],
 		["get_province,1","get_coin,3","down_threat,4"],

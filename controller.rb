@@ -177,16 +177,16 @@ class Controller
     unit = obj[:units]
 
     card.each_with_index do |c,i|
-      return [:cards,i] if mcheck(10,35+18*i,100,51+18*i)
+      return [:cards,i] if mcheck(10,35+18*i,120,51+18*i)
     end
 
     bldg.each_with_index do |b,i|
-      return [:bldgs,i] if mcheck(120,35+18*i,220,51+18*i)
+      return [:bldgs,i] if mcheck(130,35+18*i,240,51+18*i)
     end
 
     unit.each_with_index do |u,i|
-      return [:units,i] if mcheck(250,35+18*i,340,51+18*i)
-    end    
+      return [:units,i] if mcheck(250,35+18*i,360,51+18*i)
+    end
 
     return :back if mcheck(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH*2+10,BOTTOM_Y+70)
     return false

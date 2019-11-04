@@ -13,7 +13,7 @@ attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
   :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
-  :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province
+  :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders
 
   def initialize
     @status = :title
@@ -38,7 +38,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @buildings = []
     @units = [:warrior]
     @invasion_bonus = BONUSDATA
-    @coin = 0
+    @coin = 20
     @threat = 1
 
     @selected_tech = nil
@@ -60,10 +60,11 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
     @era = 0
     @era_score = 0
-
+    
     @log = []
     @archive = []
 
+    set_wonders
     calc_start_turn
 
     @page = 0
@@ -166,7 +167,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def use_coin(sym)
-    # TODO コインが0枚の時に使えないようにする　現在はテスト用に制限なく使える
+    return false if @coin == 0
+
     # 既に充分な研究・生産ポイントがある場合はコインは使えない
     case(sym)
     when :science
@@ -219,6 +221,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     return "" if str == "research_tech" and score[2].to_i != tech_era(@selected_tech)
     @era_score += score[1].to_i
     return " 時代スコア +#{score[1]}"
+  end
+
+  def set_wonders
+    wonders = WONDERSLIST[@era].shuffle
+    @selectable_wonders = []
+    3.times do 
+      @selectable_wonders.push wonders.pop
+    end
   end
 
   def init_deck

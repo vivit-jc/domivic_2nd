@@ -117,6 +117,8 @@ module Product
   	  cost_down = 0
   	  cost_down += 10 if tech_finished?(:masonry)
   	  return (BLDGDATA[obj].cost*(100-cost_down)/100).round
+    elsif WONDERSDATA[obj]
+      return WONDERSDATA[obj].cost
   	end
   end
 

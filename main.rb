@@ -83,6 +83,9 @@ Window.load_resources do
   BONUSDATA = DATA[:invasion_bonus]
   ERAMISSION = DATA[:era_mission]
   ERABONUS = DATA[:era_bonus]
+  WONDERSDATA = DATA[:wonders]
+  # jsonからデータを読むと普通のハッシュとして扱えないので、苦肉の策として世界遺産の名前リストを作る（上記TECHリストに近い）
+  WONDERSLIST = DATA[:wonders_list]
 
   game = Game.new
   controller = Controller.new(game)

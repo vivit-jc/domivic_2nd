@@ -37,7 +37,14 @@ module Click
         @action_pt += 1
       end
     when :trade
-      draw_card(card.num)
+      cost = (card.num/2).floor
+      if @coin >= cost
+        draw_card(card.num)
+        @coin -= cost
+      else
+        add_log("コインを#{cost}支払う必要があります")
+        @action_pt += 1  
+      end
     end
     @action_pt -= 1
     
