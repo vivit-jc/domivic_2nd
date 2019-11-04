@@ -69,7 +69,7 @@
 			"unlock_bldg":["forge"]
 		},
 		"music":{
-			"finish_card":[["trend",5],["trend",5]]
+			"finish_card":[["trend",5],["trend",5],["trend",5],["trend",5]]
 		},
 		"machinery":{
 			"unlock_bldg":["workshop"]
@@ -244,6 +244,12 @@
 				"text":"アクション: 侵攻を行う",
 				"action":true
 			},
+			"politics":{
+				"name":"政治",
+				"cost":[],
+				"text":"アクション: アクションカードをさらに2枚まで使える。カードを1枚引く。",
+				"action":true
+			},
 			"inspiration":{
 				"name":"ひらめき",
 				"cost":[5,10,15,20],
@@ -301,6 +307,20 @@
 				"att":6,
 				"def":0,
 				"utype":"siege"
+			},
+			"knight":{
+				"name":"騎士",
+				"cost":10,
+				"att":6,
+				"def":0,
+				"utype":"mount"
+			},
+			"masket":{
+				"name":"マスケット兵",
+				"cost":10,
+				"att":6,
+				"def":0,
+				"utype":"soldier"
 			}
 		}
 	},
@@ -380,7 +400,7 @@
 		["success_invasion,1","research_tech,2,2","build_wonder,3","culture,2,20"]
 	],
 	"era_bonus":[
-		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(2)","add_card(:inspiration,8)"]],
+		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(6)","add_card(:inspiration,8)"]],
 		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(2)","add_card(:inspiration,8)"]]
 	]
 }

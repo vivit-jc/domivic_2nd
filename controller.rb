@@ -129,6 +129,7 @@ class Controller
   def pos_rightside
     return :deck if mcheck(5,5,37,37)
     return :trash if mcheck(44,5,76,37)
+    return :buildings if mcheck(5,170,45,210)
   end
 
   def pos_leftside
@@ -162,7 +163,7 @@ class Controller
   def pos_tech_view
     [TECH_6,TECH_5,TECH_4,TECH_3,TECH_2,TECH_1].each_with_index do |t,row|
       t.size.times do |col|
-        return [5-row,col] if mcheck(50+(row%2)*20+col*50,10+50*row,90+(row%2)*20+col*50,50+50*row)
+        return [5-row,col] if mcheck(50+(row%2)*25+col*50,10+50*row,90+(row%2)*25+col*50,50+50*row)
       end
     end
     return :back if mcheck(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH,BOTTOM_Y+70)
@@ -175,6 +176,7 @@ class Controller
     card = obj[:cards]
     bldg = obj[:bldgs]
     unit = obj[:units]
+    wonders = @game.selectable_wonders
 
     card.each_with_index do |c,i|
       return [:cards,i] if mcheck(10,35+18*i,120,51+18*i)
@@ -186,6 +188,10 @@ class Controller
 
     unit.each_with_index do |u,i|
       return [:units,i] if mcheck(250,35+18*i,360,51+18*i)
+    end
+
+    wonders.each_with_index do |u,i|
+      return [:wonders,i] if mcheck(370,35+18*i,580,51+18*i)
     end
 
     return :back if mcheck(RIGHT_SIDE_WIDTH+BOTTOM_WIDTH+10,BOTTOM_Y+50,RIGHT_SIDE_WIDTH+BOTTOM_WIDTH*2+10,BOTTOM_Y+70)

@@ -38,7 +38,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @buildings = []
     @units = [:warrior]
     @invasion_bonus = BONUSDATA
-    @coin = 20
+    @coin = 100
     @threat = 1
 
     @selected_tech = nil
@@ -233,7 +233,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:trade,2],[:trade,2],[:production,1],[:inheritance,1],[:invasion,1]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:science,4],[:trade,2],[:production,5],[:inheritance,1],[:invasion,1]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

@@ -21,7 +21,12 @@ module Product
   end
 
   def set_producing_obj(obj)
-  	@selected_product = @unlocked_products[obj[0]][obj[1]]
+    if obj[0] == :wonders
+      @selected_product = @selectable_wonders[obj[1]]
+      @selectable_wonders.delete(@selected_product)
+    else
+  	  @selected_product = @unlocked_products[obj[0]][obj[1]]
+    end
   end
 
   def calc_end_turn_product
@@ -49,6 +54,9 @@ module Product
   	    if BLDGDATA[product]
           score_str = calc_era_mission("build_bldg")
   	      @buildings.push product
+        elsif WONDERSDATA[product]
+          score_str = calc_era_mission("build_wonder")
+          @buildings.push product
   	    elsif UNITDATA[product]
           score_str = calc_era_mission("build_unit")
 		      @units.push product
@@ -63,20 +71,14 @@ module Product
   end
 
   def production_finished?(obj)
-  	if obj.class == Array
-  	  return @product_prog[obj[0]][obj[1]] >= CARDDATA[obj[0]].cost[obj[1]]
-    elsif UNITDATA[obj]
-      return @product_prog[obj] >= UNITDATA[obj].cost
-    elsif BLDGDATA[obj]
-      return @product_prog[obj] >= BLDGDATA[obj].cost
-    end
+    return @product_prog[obj] >= product_cost(obj)
   end
 
   def make_product_text(obj)
   	mes = []
 
     # 生産物データが書きかけなので、無ければreturn あとで消す
-    return mes if (obj.class == Array and !CARDDATA[obj[0]]) and !UNITDATA[obj] and !BLDGDATA[obj]
+    return mes if (obj.class == Array and !CARDDATA[obj[0]]) and !UNITDATA[obj] and !BLDGDATA[obj] and !WONDERSDATA[obj]
 
     mes.push product_j(obj)
 
@@ -87,6 +89,8 @@ module Product
   	  mes.push "タイプ: #{utype_j(unit.utype)}"
   	elsif bldg = BLDGDATA[obj]
   	  mes.push bldg.text
+    elsif wonder = WONDERSDATA[obj]
+      mes.push wonder.text
   	end
 
   	return mes
@@ -109,6 +113,7 @@ module Product
   end
 
   def product_cost(obj)
+    # 軽減効果などを含めた結果を返す
   	if obj.class == Array
   	  return CARDDATA[obj[0]].cost[obj[1]]
   	elsif UNITDATA[obj]
@@ -124,11 +129,14 @@ module Product
 
   def product_j(obj)
   	if obj.class == Array
+      return CARDDATA[obj[0]][:name] if obj[1] == 0
   	  return CARDDATA[obj[0]][:name]+obj[1].to_s
   	elsif unit = UNITDATA[obj]
   	  return unit.name
   	elsif bldg = BLDGDATA[obj]
   	  return bldg.name
+    elsif wonder = WONDERSDATA[obj]
+      return wonder.name
   	end
   end
 

@@ -94,8 +94,16 @@ module Tech
       ["unlock_unit","ユニットを解禁: "],
       ["effect","効果: "]
     ].each do |e,j|
-      if TECHDATA[sym.to_s][e]
-        mes.push j+TECHDATA[sym.to_s][e].to_s
+      str = ""
+      if data = TECHDATA[sym.to_s][e]
+        if data.class == String
+          str = data
+        else
+          data.each do |d|
+            str += product_j(d)+" "
+          end
+        end
+        mes.push j+str
       end
     end
     return mes

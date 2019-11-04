@@ -21,6 +21,7 @@ class View
     @deckinfoback = Image.new(60,480)
     @trashinfoback = Image.new(60,480)
     @erainfoback = Image.new(310,480)
+    @bldginfoback = Image.new(200,480)
 
     @tech_array = @game.tech_array
     @flat_tech_array = @game.flat_tech_array
@@ -134,12 +135,12 @@ class View
     Window.draw(5,170,Image[:construction])
     Window.draw(47,170,Image[:money_bag])
     Window.draw_font(8,205,sprintf("% 2d",@game.buildings.size.to_s),Font20)
-    Window.draw_font(49,205,sprintf("% 2d",@game.coin.to_s),Font20)
+    Window.draw_font(45,205,sprintf("% 2d",@game.coin),Font20)
 
     Window.draw(5,240,Image[:emblem])
     Window.draw(47,240,Image[:culture])
     Window.draw_font(8,280," 2",Font20)
-    Window.draw_font(49,280,sprintf("% 2d",@game.culture_pt.to_s),Font20)
+    Window.draw_font(45,280,sprintf("% 2d",@game.culture_pt),Font20)
     
   end
 
@@ -199,6 +200,11 @@ class View
       @game.trash.sort{|a,b|a.name<=>b.name}.each_with_index do |c,i|
         Window.draw_font(Input.mouse_x+3,Input.mouse_y+3+18*i,c.name,Font16)
       end
+    when :buildings
+      Window.draw(Input.mouse_x,Input.mouse_y,@bldginfoback)
+      @game.buildings.each_with_index do |e,i|
+        Window.draw_font(Input.mouse_x+3,Input.mouse_y+3+18*i,@game.product_j(e),Font16)
+      end      
     end
   end
 
@@ -212,7 +218,6 @@ class View
       bonus = ERABONUS[@game.era]
       [bonus[0].to_i-1,bonus[0],bonus[1]].each_with_index do |e,i|
         pri = i == 0 ? "以下" : "以上"
-        pri = "以上でさらに" if i == 2
         Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*(i*2+5),e.to_s+pri,Font16)
         Window.draw_font(Input.mouse_x-300,Input.mouse_y+3+18*(i*2+6),make_erabonus_str(i),Font16)
       end
@@ -229,7 +234,7 @@ class View
     Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
     Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
     @tech_array.reverse.each_with_index do |t,i|
-      draw_tech_view_row(t,50+(i%2)*20,10+50*i)
+      draw_tech_view_row(t,50+(i%2)*25,10+50*i)
     end
     # マウスオーバーで説明を表示
     pos_tech = @controller.pos_tech_view
@@ -278,12 +283,17 @@ class View
       Window.draw_font(555, 35+18*i, @game.product_cost(p), Font16)
     end
 
-
     # マウスオーバーで説明を表示
     pos_product = @controller.pos_product_view
     if pos_product and pos_product != :back
-      @game.make_product_text(@game.unlocked_products[pos_product[0]][pos_product[1]]).each_with_index do |t,i|
-        Window.draw_font(50,330+18*i,t,Font16)
+      if pos_product[0] != :wonders
+        @game.make_product_text(@game.unlocked_products[pos_product[0]][pos_product[1]]).each_with_index do |t,i|
+          Window.draw_font(50,330+18*i,t,Font16)
+        end
+      else
+        @game.make_product_text(@game.selectable_wonders[pos_product[1]]).each_with_index do |t,i|
+          Window.draw_font(50,330+18*i,t,Font16)
+        end
       end
     end
 
@@ -328,9 +338,11 @@ class View
     @deckinfoback = Image.new(60,480)
     @trashinfoback = Image.new(60,480)
     @erainfoback = Image.new(310,480)
+    @bldginfoback = Image.new(200,480)
     @deckinfoback.box_fill(0,0,60,@game.deck.size*18+6,DARKGRAY) if @game.deck.size > 0
     @trashinfoback.box_fill(0,0,60,@game.trash.size*18+6,DARKGRAY) if @game.trash.size > 0
     @erainfoback.box_fill(0,0,310,(ERAMISSION[@game.era].size+7)*18+6,DARKGRAY)
+    @bldginfoback.box_fill(0,0,200,@game.buildings.size*18+6,DARKGRAY) if @game.buildings.size > 0
   end
 
   def refresh_gages
