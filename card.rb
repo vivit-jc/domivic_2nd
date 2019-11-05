@@ -16,6 +16,10 @@ attr_reader :num, :kind, :name
     return CARDDATA[@kind].action
   end
 
+  def instant?
+    return CARDDATA[@kind].instant
+  end
+
   def data
     return CARDDATA[@kind]
   end

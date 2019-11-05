@@ -80,6 +80,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def turn_end
     calc_end_turn
+    @hand = @hand.select{|c|!c.instant?}
     while(@hand.size > 0)
       @trash.push @hand.pop
     end
@@ -136,11 +137,11 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_research
-    @temp_research_pt = sum_point(:science)
+    @temp_research_pt = sum_point(:science) + sum_point(:inspiration)
   end
 
   def calc_culture
-    @temp_culture_pt = sum_point(:culture)
+    @temp_culture_pt = sum_point(:culture) + sum_point(:trend)
   end
 
   def calc_production
@@ -164,6 +165,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def sum_point(kind)
     array = @hand.select{|e|e.kind == kind}.map{|e|e.num}
     return 0 if array.size == 0
+    return array.inject{|sum,n|sum+n} if CARDDATA[kind].instant
     return array.inject{|sum,n|sum+n} + @coin_pt[kind] + get_province_pt(kind)
   end
 
@@ -289,7 +291,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:science,4],[:trade,2],[:production,5],[:inheritance,1],[:invasion,1]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:production,5],[:inheritance,1],[:trend,5]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

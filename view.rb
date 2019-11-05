@@ -104,6 +104,7 @@ class View
       Window.draw(x,y,back)
       Window.draw(x+2,y+2,Image[card.kind])
       Window.draw_font(x+45,y+3,"★",Font12) if card.action? and @game.action_pt > 0
+      Window.draw_font(x+45,y+3,"◎",Font12) if card.instant?
       Window.draw_font(x+2,y+38,card.name,Font16)
     end
   end
@@ -217,7 +218,7 @@ class View
         Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*(i+1),make_erainfo_str(str),Font16)
       end
       bonus = ERABONUS[@game.era]
-      [bonus[0].to_i-1,bonus[0],bonus[1]].each_with_index do |e,i|
+      [bonus[0]-1,bonus[0],bonus[1]].each_with_index do |e,i|
         pri = "以下" if i == 0
         pri = "から#{bonus[1]-1}" if i == 1
         pri = "以上" if i == 2
@@ -411,8 +412,14 @@ class View
       r = "建物を建設する"
     when "success_invasion"
       r = "侵攻に成功する"
+    when "success_defense"
+      r = "防衛に成功する"  
     when "build_wonder"
       r = "世界遺産を建設する"
+    when "growth_level_up"
+      r = "成長Lvを上げる"
+    when "born_great_person"
+      r = "偉人を誕生させる"
     when "culture"
       r = "文化を#{@game.era*20+10}以上にする"
     end
