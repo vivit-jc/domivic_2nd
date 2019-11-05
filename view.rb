@@ -140,13 +140,13 @@ class View
     Window.draw(5,240,Image[:emblem])
     Window.draw(47,240,Image[:culture])
     Window.draw_font(8,280," 2",Font20)
-    Window.draw_font(45,280,sprintf("% 2d",@game.culture_pt),Font20)
+    Window.draw_font(45,280,sprintf("% 2d",@game.culture_pt+@game.temp_culture_pt),Font20)
     
   end
 
   def draw_leftside
     Window.draw_font(LEFT_SIDE_X+20,5,"【#{era_j}】",Font28)
-    Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/10",Font20)
+    Window.draw_font(LEFT_SIDE_X,40,"ターン #{@game.turn}/#{(@game.era+1)*TURN_ERA}",Font20)
     Window.draw_font(LEFT_SIDE_X,62,"時代スコア #{@game.era_score}",Font20)
     Window.draw_font(LEFT_SIDE_X,84,"属州 #{@game.province}",Font20)
     Window.draw_font(LEFT_SIDE_X,106,"脅威Lv #{@game.threat}",Font20)
@@ -212,12 +212,15 @@ class View
     case(@controller.pos_leftside)
     when :era_score
       Window.draw(Input.mouse_x-310,Input.mouse_y,@erainfoback)
-      ERAMISSION[@game.era].each_with_index do |c,i|
-        Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*i,make_erainfo_str(c),Font16)
+      Window.draw_font(Input.mouse_x-307,Input.mouse_y+3,"【時代スコア獲得条件】",Font16)
+      @game.era_missions.each_with_index do |str,i|
+        Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*(i+1),make_erainfo_str(str),Font16)
       end
       bonus = ERABONUS[@game.era]
       [bonus[0].to_i-1,bonus[0],bonus[1]].each_with_index do |e,i|
-        pri = i == 0 ? "以下" : "以上"
+        pri = "以下" if i == 0
+        pri = "から#{bonus[1]-1}" if i == 1
+        pri = "以上" if i == 2
         Window.draw_font(Input.mouse_x-307,Input.mouse_y+3+18*(i*2+5),e.to_s+pri,Font16)
         Window.draw_font(Input.mouse_x-300,Input.mouse_y+3+18*(i*2+6),make_erabonus_str(i),Font16)
       end
@@ -341,7 +344,7 @@ class View
     @bldginfoback = Image.new(200,480)
     @deckinfoback.box_fill(0,0,60,@game.deck.size*18+6,DARKGRAY) if @game.deck.size > 0
     @trashinfoback.box_fill(0,0,60,@game.trash.size*18+6,DARKGRAY) if @game.trash.size > 0
-    @erainfoback.box_fill(0,0,310,(ERAMISSION[@game.era].size+7)*18+6,DARKGRAY)
+    @erainfoback.box_fill(0,0,310,(ERAMISSION[@game.era].size+8)*18+6,DARKGRAY)
     @bldginfoback.box_fill(0,0,200,@game.buildings.size*18+6,DARKGRAY) if @game.buildings.size > 0
   end
 
@@ -395,20 +398,25 @@ class View
     end
   end
 
-  def make_erainfo_str(array)
-    array = array.split(",")
-    case array[0]
+  def make_erainfo_str(str)
+    score = @game.get_era_score_from_str(str)
+    case str
     when "research_tech"
-      return "世代#{array[2].to_i+1}の技術を研究する: +#{array[1]}"
+      r = "世代#{@game.era+2}以上の技術を研究する"
     when "build_unit"
-      return "ユニットを生産する: +#{array[1]}"
+      r = "ユニットを生産する"
+    when "build_card"
+      r = "カードを生産する"
     when "build_bldg"
-      return "建物を生産する: +#{array[1]}"
+      r = "建物を建設する"
     when "success_invasion"
-      return "侵攻に成功する: +#{array[1]}"
+      r = "侵攻に成功する"
+    when "build_wonder"
+      r = "世界遺産を建設する"
     when "culture"
-      return "文化を#{array[2]}以上にする: +#{array[1]}"
+      r = "文化を#{@game.era*20+10}以上にする"
     end
+    return r+": +#{score}"
   end
 
   def make_erabonus_str(i)

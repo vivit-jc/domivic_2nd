@@ -54,12 +54,12 @@ module Click
     case @action_card[:card].kind 
     when :authority
       card = @hand[pos].name
-      add_log("#{card}を除外しました")
+      add_log("#{card}を除外した")
       @hand.delete_at(pos)
       @action_card[:n] -= 1
     when :inheritance
       card = @hand[pos].name
-      add_log("#{card}を次のターンに送りました")
+      add_log("#{card}を次のターンに送った")
       next_card = @hand.delete_at(pos)
       @inheritance.push next_card
       calc_all_points
@@ -77,8 +77,7 @@ module Click
   	  	@province += num
   	  	add_log("属州を得た")
   	  when "get_coin"
-  	  	@coin += num
-  	  	add_log("コインを得た(#{num})")
+  	  	add_coin(num)
   	  when "down_threat"
   	  	@threat -= num
   	  	add_log("脅威Lvが下がった(#{num})")

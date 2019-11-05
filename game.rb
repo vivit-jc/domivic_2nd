@@ -11,9 +11,9 @@ include Click
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
-  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :production_pt, :selected_tech, :selected_product,
+  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :temp_culture_pt, :production_pt, :selected_tech, :selected_product,
   :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
-  :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders
+  :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders, :era_missions
 
   def initialize
     @status = :title
@@ -53,6 +53,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @great_person_pt = 0
     @temp_research_pt = 0
     @culture_pt = 0
+    @temp_culture_pt = 0
     @production_pt = 0
     @coin_pt = {science: 0, production: 0, growth: 0, culture: 0}
     @province = 0
@@ -60,11 +61,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
     @era = 0
     @era_score = 0
+    @era_missions = []
+    @era_culture_flag = Array.new(6,false)
     
     @log = []
     @archive = []
 
     set_wonders
+    set_era_missions
     calc_start_turn
 
     @page = 0
@@ -79,7 +83,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     while(@hand.size > 0)
       @trash.push @hand.pop
     end
-
     # 山札の枚数が成長レベル+2より少ない場合は全部引く
     draw_card([@trash.size+@deck.size,@growth_level+2].min)
     @hand += @inheritance
@@ -105,6 +108,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     calc_end_turn_product
     calc_end_turn_growth
     calc_great_person
+    calc_era_mission("culture")
+    go_next_era
   end
 
   def calc_growth
@@ -199,6 +204,16 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     calc_production
   end
 
+  def go_next_era
+    return unless @turn == (@era+1)*TURN_ERA
+    set_wonders
+    add_log("次の時代になった")
+    give_era_reward
+    set_era_missions
+    add_card(:threat,0)
+    @era += 1
+  end
+
   def push_space
 
   end
@@ -215,20 +230,61 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     return @units.map{|u|UNITDATA[u].def}.inject{|sum,n|sum+n}
   end
 
+  def give_era_reward
+    if @era_score < ERABONUS[@era][0]
+      ERABONUS[@era][2].each{|e|eval(e)}
+    elsif @era_score < ERABONUS[@era][1]
+      ERABONUS[@era][3].each{|e|eval(e)}
+    else
+      ERABONUS[@era][4].each{|e|eval(e)}
+    end
+  end
+
+  def set_era_missions
+    @era_score = 0
+    @era_missions = []
+    pt = [0,1,2]
+    pt.delete_at(rand(2))
+    2.times do |i|
+      @era_missions.push ERAMISSION[pt[i]][rand(2)]
+    end
+    @era_missions.push "culture"
+  end
+
   def calc_era_mission(str)
-    score = ERAMISSION[@era].map{|e|e.split(",")}.find{|e|e[0] == str}
-    return "" unless score
-    return "" if str == "research_tech" and score[2].to_i != tech_era(@selected_tech)
-    @era_score += score[1].to_i
-    return " 時代スコア +#{score[1]}"
+    return "" unless @era_missions.include?(str)
+    score = get_era_score_from_str(str)
+    return "" if str == "research_tech" and tech_era(@selected_tech) <= @era
+    return "" if str == "culture" and (@culture_pt < @era*20+10 or @era_culture_flag[@era])
+    @era_score += score
+    if str == "culture"
+      add_log("文化が#{@era*20+10}以上になった 時代スコア+#{score}")
+      @era_culture_flag[@era] = true
+    end
+    return " 時代スコア +#{score}"
+  end
+
+  # この時代の時代ミッションに設定されているかどうかは関係なくスコアを返す
+  def get_era_score_from_str(str)
+    return 2 if str == "culture"
+    ERAMISSION.each_with_index do |e,i|
+      return i+1 if e.include?(str)
+    end
   end
 
   def set_wonders
-    wonders = WONDERSLIST[@era].shuffle
-    @selectable_wonders = []
-    3.times do 
-      @selectable_wonders.push wonders.pop
-    end
+    @selectable_wonders = WONDERSLIST[@era].shuffle
+  end
+
+  def add_card(kind,num)
+    card = Card.new(kind,num)
+    @trash.push card
+    add_log("【#{card.name}】を得た")
+  end
+
+  def add_coin(n)
+    @coin += n
+    add_log("#{n}コインを得た")
   end
 
   def init_deck

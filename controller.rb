@@ -135,7 +135,7 @@ class Controller
   def pos_leftside
     d_width = 0
     d_height = 0
-    return :era_score if mcheck(LEFT_SIDE_X,62,640,82)
+    return :era_score if mcheck(LEFT_SIDE_X,5,640,82)
     [[170,70,:turn_end]].each do |width, height, sym|
       d_width += width
       d_height += height

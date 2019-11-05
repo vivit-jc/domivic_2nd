@@ -263,6 +263,15 @@
 			"stagnation":{
 				"name":"停滞",
 				"cost":[5,10,15,20]
+			},
+			"riot":{
+				"name":"動乱",
+				"cost":[5,10,15,20],
+				"instant":true
+			},			
+			"threat":{
+				"name":"脅威",
+				"text":"ターン終了時に防衛を行う。このカードは権威では除外できない。"
 			}
 		},
 		"unit":{
@@ -334,25 +343,25 @@
 		"pyramid":{
 			"name":"ピラミッド",
 			"cost":10,
-			"text":"考え中",
+			"text":"時代が変わるたびに、時代スコア+1",
 			"era":0
 		},
 		"great_library":{
 			"name":"アレクサンドリア図書館",
 			"cost":10,
-			"text":"考え中",
+			"text":"毎ターン、研究+4",
 			"era":0
 		},
 		"great_wall":{
 			"name":"万里の長城",
 			"cost":10,
-			"text":"考え中",
+			"text":"《平穏》を1つ得る",
 			"era":0
 		},
 		"temple_of_artemis":{
 			"name":"アルテミス神殿",
 			"cost":10,
-			"text":"考え中",
+			"text":"山札をリシャッフルするたびに、時代の数x4コインを得る",
 			"era":0
 		},
 		"hanging_garden":{
@@ -370,13 +379,13 @@
 		"great_lighthouse":{
 			"name":"ファロス灯台",
 			"cost":10,
-			"text":"考え中",
+			"text":"交易カードをコインを支払わずに使えるようになる",
 			"era":1
 		},
 		"colossus_of_rhodes":{
 			"name":"ロードス島の巨神像",
 			"cost":10,
-			"text":"考え中",
+			"text":"建物の生産を完了した時、その本来のコストの10%に等しいコインを得る",
 			"era":1
 		},
 		"tomb_of_mausolus":{
@@ -396,8 +405,9 @@
 		["get_province,1","get_coin,3","get_great_general,1"]
 	],
 	"era_mission":[
-		["build_unit,1","build_bldg,2","research_tech,3,1","culture,2,10"],
-		["success_invasion,1","research_tech,2,2","build_wonder,3","culture,2,20"]
+		["build_unit","build_card","success_defense"],
+		["research_tech","build_bldg","success_invasion"],
+		["build_wonder","born_great_person","growth_level_up"]
 	],
 	"era_bonus":[
 		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(6)","add_card(:inspiration,8)"]],

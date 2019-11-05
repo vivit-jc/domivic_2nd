@@ -31,11 +31,10 @@ module Product
 
   def calc_end_turn_product
   	product = @selected_product
+    init_prodoct_prog(product)
   	if product.class == Array
-  	  @product_prog[product[0]] = Array.new(10,0) unless @product_prog[product[0]]
   	  @product_prog[product[0]][product[1]] += @production_pt + @coin_pt[:production]
   	else
-  	  @product_prog[product] = 0 unless @product_prog[product]
       @product_prog[product] += @production_pt + @coin_pt[:production]
   	end
 
@@ -71,7 +70,20 @@ module Product
   end
 
   def production_finished?(obj)
-    return @product_prog[obj] >= product_cost(obj)
+    init_prodoct_prog(obj)
+    if obj.class == Array
+      return @product_prog[obj[0]][obj[1]] >= product_cost(obj)
+    else
+      return @product_prog[obj] >= product_cost(obj)
+    end
+  end
+
+  def init_prodoct_prog(obj)
+    if obj.class == Array
+      @product_prog[obj[0]] = Array.new(10,0) unless @product_prog[obj[0]]
+    else
+      @product_prog[obj] = 0 unless @product_prog[obj]
+    end
   end
 
   def make_product_text(obj)

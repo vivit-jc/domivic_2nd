@@ -15,12 +15,9 @@ module Tech
       # 技術データが書きかけなので、無ければここでreturn あとで消す
       return unless TECHDATA[@selected_tech.to_s]
 
-      # 研究完了時にタイルがもらえる処理
+      # 研究完了時にカードがもらえる処理
       if cards = TECHDATA[@selected_tech.to_s]["finish_card"]
-        cards.each do |t|
-          card = Card.new(t[0],t[1])
-          @trash.push card
-        end
+        cards.each{|t|add_card(t[0],t[1])}
       end
       
       @selected_tech = nil
