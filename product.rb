@@ -32,24 +32,25 @@ module Product
   def calc_end_turn_product
   	product = @selected_product
     init_prodoct_prog(product)
+    add_point = @temp_product_pt + @coin_pt[:production] + @over_product_pt
   	if product.class == Array
-  	  @product_prog[product[0]][product[1]] += @production_pt + @coin_pt[:production]
+  	  @product_prog[product[0]][product[1]] += add_point
   	else
-      @product_prog[product] += @production_pt + @coin_pt[:production]
+      @product_prog[product] += add_point
   	end
-
-    @production_pt = 0
+    @temp_product_pt = 0
+    @over_product_pt = 0
     @coin_pt[:production] = 0
 
   	if production_finished?(product)
   	  str = "生産完了: "+product_j(@selected_product)
       score_str = ""
   	  if product.class == Array
-  	    @production_pt += @product_prog[product[0]][product[1]] - product_cost(product)
+  	    @over_product_pt += @product_prog[product[0]][product[1]] - product_cost(product)
   	    @trash.push Card.new(product[0],product[1])
   	    @product_prog[product[0]][product[1]] = 0
   	  else
-  	    @production_pt += @product_prog[product] - product_cost(product)
+  	    @over_product_pt += @product_prog[product] - product_cost(product)
   	    if BLDGDATA[product]
           score_str = calc_era_mission("build_bldg")
   	      @buildings.push product
@@ -150,6 +151,12 @@ module Product
     elsif wonder = WONDERSDATA[obj]
       return wonder.name
   	end
+  end
+
+  def sum_product_pt
+    product = @selected_product
+    return 0 unless product
+    return get_product_prog(product)+@temp_product_pt+@coin_pt[:production]+@over_product_pt
   end
 
   def utype_j(utype)

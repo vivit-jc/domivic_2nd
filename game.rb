@@ -11,7 +11,8 @@ include Click
 
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
-  :great_person_num, :growth_pt, :temp_research_pt, :culture_pt, :temp_culture_pt, :production_pt, :selected_tech, :selected_product,
+  :great_person_num, :growth_pt, :temp_research_pt, :over_research_pt, :culture_pt, :temp_culture_pt, :temp_product_pt, :over_product_pt, 
+  :selected_tech, :selected_product,
   :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
   :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders, :era_missions
 
@@ -51,10 +52,16 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @growth_pt = 0
     @great_person_num = 0    
     @great_person_pt = 0
+
     @temp_research_pt = 0
+    @over_research_pt = 0
+
+    @temp_product_pt = 0
+    @over_product_pt = 0
+
     @culture_pt = 0
     @temp_culture_pt = 0
-    @production_pt = 0
+
     @coin_pt = {science: 0, production: 0, growth: 0, culture: 0}
     @province = 0
     @province_pt = {science: 0, production: 0, growth: 1, culture: 0}
@@ -145,7 +152,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def calc_production
-    @production_pt = sum_point(:production)
+    @temp_product_pt = sum_point(:production)
   end
 
   def selectable_turn_end?
@@ -179,9 +186,9 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     # 既に充分な研究・生産ポイントがある場合はコインは使えない
     case(sym)
     when :science
-      return false if @tech_prog[@selected_tech]+@temp_research_pt+@coin_pt[sym] >= tech_cost(@selected_tech)
+      return false if sum_research_pt >= tech_cost(@selected_tech)
     when :production
-      return false if get_product_prog(@selected_tech)+@production_pt+@coin_pt[sym] >= product_cost(@selected_product)
+      return false if sum_product_pt >= product_cost(@selected_product)
     end
     @coin_pt[sym] += 1
     @coin -= 1
@@ -208,12 +215,12 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def go_next_era
     return unless @turn == (@era+1)*TURN_ERA
-    set_wonders
     add_log("次の時代になった")
     give_era_reward
     set_era_missions
     add_card(:threat,0)
     @era += 1
+    set_wonders
   end
 
   def push_space
@@ -291,7 +298,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:production,5],[:inheritance,1],[:trend,5]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

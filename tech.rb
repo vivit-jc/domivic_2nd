@@ -1,7 +1,9 @@
 module Tech
 
   def calc_end_turn_tech
-    @tech_prog[@selected_tech] += @temp_research_pt + @coin_pt[:science]
+    @tech_prog[@selected_tech] += @temp_research_pt + @coin_pt[:science] + @over_research_pt
+    @temp_research_pt = 0
+    @over_research_pt = 0
     @coin_pt[:science] = 0
     # 研究完了処理
     if tech_finished?(@selected_tech)
@@ -9,7 +11,7 @@ module Tech
       score_str = calc_era_mission("research_tech")
       add_log("研究完了: "+tech_j(@selected_tech)+score_str)
       # 研究ポイントの溢れ処理
-      @temp_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
+      @over_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)
       
       # 技術データが書きかけなので、無ければここでreturn あとで消す
@@ -21,8 +23,6 @@ module Tech
       end
       
       @selected_tech = nil
-    else
-      @temp_research_pt = 0
     end
   end
 
@@ -75,6 +75,12 @@ module Tech
 
   def tech_j(sym)
     return @flat_tech_array.find{|e|e[0] == sym}[1]
+  end
+
+  def sum_research_pt
+    tech = @selected_tech
+    return 0 unless tech
+    return @tech_prog[tech]+@temp_research_pt+@coin_pt[:science]+@over_research_pt
   end
 
   def make_tech_text(sym)
