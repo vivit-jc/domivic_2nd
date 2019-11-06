@@ -15,8 +15,8 @@ class Controller
       case @game.status
       when :title
         @game.start if(pos_title_menu == 0)
-        @game.stats if(pos_title_menu == 1)
-        @game.all_clear if(pos_title_menu == 2)
+        #@game.stats if(pos_title_menu == 1)
+        #@game.all_clear if(pos_title_menu == 2)
       when :game
         click_on_game
       when :stats
@@ -41,7 +41,7 @@ class Controller
         return
       end
     else
-      @game.turn_end if @game.selectable_turn_end? and pos_leftside == :turn_end
+      @game.click_turn_end if pos_leftside == :turn_end
     end
 
     @game.click_hand(pos_hand) if pos_hand and @game.view_status == :main_view
@@ -114,7 +114,16 @@ class Controller
     @game.hand.each_with_index do |card,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = 5+65*(i/5).floor
-      return i if mcheck(x,y,x+50,y+50)
+      return i if mcheck(x,y,x+60,y+60)
+    end
+    return false
+  end
+
+  def pos_unit
+    @game.units.each_with_index do |unit,i|
+      x = RIGHT_SIDE_WIDTH+(i%5)*65
+      y = UNITS_Y+65*(i/5).floor
+      return i if mcheck(x,y,x+60,y+60)
     end
     return false
   end

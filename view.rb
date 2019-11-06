@@ -11,7 +11,7 @@ class View
     @actioncardback = Image.new(60,60)
     @actioncardback.box_fill(0,0,60,60,DARKBLUE)    
     @unitback = Image.new(60,60)
-    @unitback.box_fill(0,0,60,60,DARKRED)
+    @unitback.box_fill(0,0,60,60,DARKRED)  
     @buttonback = Image.new(170,70)
     @buttonback.box_fill(0,0,170,70,YELLOW)
     @tech_panel_back = Image.new(160,70)
@@ -110,12 +110,11 @@ class View
   end
 
   def draw_units
-    @game.units.each_with_index do |u,i|
-      unit = UNITDATA[u]
+    @game.units.each_with_index do |unit,i|
       x = RIGHT_SIDE_WIDTH+(i%5)*65
       y = UNITS_Y+65*(i/5).floor
       Window.draw(x,y,@unitback)
-      Window.draw(x+2,y+2,Image[u.to_sym])
+      Window.draw(x+2,y+2,Image[unit.kind.to_sym])
       Window.draw_font(x+2,y+38,"#{unit.att}/#{unit.def}",Font16)
     end
   end
@@ -152,7 +151,9 @@ class View
     Window.draw_font(LEFT_SIDE_X,84,"属州 #{@game.province}",Font20)
     Window.draw_font(LEFT_SIDE_X,106,"脅威Lv #{@game.threat}",Font20)
     Window.draw(LEFT_SIDE_X,BOTTOM_Y,@buttonback)
-    if @game.selectable_turn_end?
+    if @game.selectable_turn_end? and @game.exist_defense_event?
+      Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"防衛イベント",Font24,{color: C_BLACK}) 
+    elsif @game.selectable_turn_end?
       Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,"ターン終了",Font28,{color: C_BLACK}) 
     else
       Window.draw_font(LEFT_SIDE_X+14,BOTTOM_Y+23,@game.need_to_turn_end_mes,Font16,{color: C_BLACK}) 
@@ -202,7 +203,8 @@ class View
       end
     when :buildings
       Window.draw(Input.mouse_x,Input.mouse_y,@bldginfoback)
-      @game.buildings.each_with_index do |e,i|
+      array = @game.buildings+@game.wonders
+      array.each_with_index do |e,i|
         Window.draw_font(Input.mouse_x+3,Input.mouse_y+3+18*i,@game.product_j(e),Font16)
       end      
     end
@@ -263,7 +265,6 @@ class View
     Window.draw_font(130, 10, "建物", Font20)
     Window.draw_font(250, 10, "ユニット", Font20)
     Window.draw_font(370, 10, "世界遺産", Font20)
-
 
     @game.unlocked_products[:cards].each_with_index do |p,i|
       card = CARDDATA[p[0]]

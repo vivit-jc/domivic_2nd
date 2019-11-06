@@ -56,10 +56,10 @@ module Product
   	      @buildings.push product
         elsif WONDERSDATA[product]
           score_str = calc_era_mission("build_wonder")
-          @buildings.push product
+          @wonders.push product
   	    elsif UNITDATA[product]
           score_str = calc_era_mission("build_unit")
-		      @units.push product
+		      @units.push Unit.new(product)
 		      @product_prog[product] = 0
   	    end
   	  end
@@ -99,7 +99,7 @@ module Product
   	  mes.push CARDDATA[obj[0]][:text]
   	elsif unit = UNITDATA[obj]
   	  mes.push "攻撃力: #{unit.att} 防御力: #{unit.def}"
-  	  mes.push "タイプ: #{utype_j(unit.utype)}"
+  	  mes.push "タイプ: #{Unit::get_utype_j(obj)}"
   	elsif bldg = BLDGDATA[obj]
   	  mes.push bldg.text
     elsif wonder = WONDERSDATA[obj]
@@ -157,19 +157,6 @@ module Product
     product = @selected_product
     return 0 unless product
     return get_product_prog(product)+@temp_product_pt+@coin_pt[:production]+@over_product_pt
-  end
-
-  def utype_j(utype)
-  	case utype
-  	when "soldier"
-  	  return "兵士"
-  	when "mount"
-  	  return "騎馬"
-  	when "siege"
-  	  return "攻城"
-  	when "defender"
-  	  return "防衛"
-  	end
   end
 
 end

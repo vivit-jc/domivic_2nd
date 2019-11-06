@@ -1,4 +1,5 @@
 require_remote './card.rb'
+require_remote './unit.rb'
 require_remote './tech.rb'
 require_remote './product.rb'
 require_remote './click.rb'
@@ -13,7 +14,8 @@ attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :over_research_pt, :culture_pt, :temp_culture_pt, :temp_product_pt, :over_product_pt, 
   :selected_tech, :selected_product,
-  :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, :buildings, :units, :log, :archive, :coin, :coin_pt,
+  :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, 
+  :buildings, :wonders, :units, :log, :archive, :coin, :coin_pt,
   :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders, :era_missions
 
   def initialize
@@ -37,10 +39,12 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @trash = []
     @inheritance = []
     @buildings = []
-    @units = [:warrior]
+    @wonders = []
+    @units = [Unit.new(:warrior)]
     @invasion_bonus = BONUSDATA
     @coin = 100
     @threat = 1
+    @defense_event = 0
 
     @selected_tech = nil
     @selected_product = nil
@@ -85,6 +89,15 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @status = :game
   end
 
+  def click_turn_end
+    return unless selectable_turn_end?
+    if @hand.select{|c|c.kind == :threat}.size > @defense_event 
+      calc_defense_event
+    else
+      turn_end
+    end
+  end
+
   def turn_end
     calc_end_turn
     @hand = @hand.select{|c|!c.instant?}
@@ -112,6 +125,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @archive += @log
     @log = []
     @culture_pt += @temp_culture_pt
+    @defense_event = 0
     calc_end_turn_tech
     calc_end_turn_product
     calc_end_turn_growth
@@ -134,6 +148,85 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     end
     @growth_pt = 0
 
+  end
+
+  def calc_defense_event
+    if get_def >= @threat
+      add_log("防衛成功! "+calc_era_mission("success_defense"))
+    else
+      add_log("防衛に失敗・・・")
+      calc_penalty
+    end
+    @threat += 1
+    @defense_event += 1
+  end
+
+  def calc_penalty
+    penalty = [:bldg,:unit,:stagnation,:riot,:research,:great_person,:growth_lv].sample
+    case penalty 
+    when :bldg
+      # 建物をランダムにN/3(切り上げ)個失う。建物が無い場合は選ばれない。
+      if @buildings.size == 0
+        calc_penalty
+        return
+      end
+      targets = []
+      tarray = @buildings.shuffle
+      ((@era/4).floor+1).times do
+        break if tarray.size == 0
+        t = tarray.pop
+        add_log(BLDGDATA[t].name+"が破壊された")
+        @buildings.delete(t)
+        @product_prog[t] = 0
+      end
+    when :unit
+      # ユニットをランダムに1~N個失う。ユニットが無い場合は選ばれない。
+      if @units.size == 0
+        calc_penalty
+        return
+      end
+      targets = []
+      tarray = @units.shuffle
+      (rand(@era+1)+1).times do
+        break if tarray.size == 0
+        t = tarray.pop
+        add_log(t.name+"が破壊された")
+        @units.delete(t)
+      end
+    when :stagnation
+      array = []
+      (@era+1).times{array.push Card.new(:stagnation,0)}
+      @trash += array
+      add_log("【停滞】を#{@era+1}枚得た")
+    when :riot
+      array = []
+      ((@era+1)*2).times{array.push Card.new(:riot,0)}
+      @trash += array
+      add_log("【動乱】を#{(@era+1)*2}枚得た")
+    when :research
+      # 現在研究中の技術の進捗が失われる。進捗が半分以下の場合は選ばれない
+      if @tech_prog[@selected_tech] <= tech_cost(@selected_tech)/2
+        calc_penalty
+        return
+      end
+      @tech_prog[@selected_tech] = 0
+      add_log("#{tech_j(@selected_tech)}の研究がすべて失われた")
+    when :great_person
+      if @great_person_pt < @great_person_num*10+10
+        calc_penalty
+        return
+      end      
+      @great_person_pt /= 2
+      @great_person_pt = @great_person_pt.floor
+      add_log("偉人ポイントが半分に減った")
+    when :growth_lv
+      if @growth_level == 1
+        calc_penalty
+        return
+      end
+      @growth_level -= 1
+      add_log("成長Lvが1下がった")
+    end
   end
 
   def calc_great_person
@@ -232,11 +325,13 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   end
 
   def get_att
-    return @units.map{|u|UNITDATA[u].att}.inject{|sum,n|sum+n}
+    return 0 if @units.size == 0
+    return @units.map{|u|u.att}.inject{|sum,n|sum+n}
   end
 
   def get_def
-    return @units.map{|u|UNITDATA[u].def}.inject{|sum,n|sum+n}
+    return 0 if @units.size == 0
+    return @units.map{|u|u.def}.inject{|sum,n|sum+n}
   end
 
   def give_era_reward
@@ -285,6 +380,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @selectable_wonders = WONDERSLIST[@era].shuffle
   end
 
+  def exist_defense_event?
+    return @hand.select{|c|c.kind == :threat}.size > @defense_event 
+  end
+
   def add_card(kind,num)
     card = Card.new(kind,num)
     @trash.push card
@@ -298,7 +397,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:threat,0],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

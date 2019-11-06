@@ -53,8 +53,12 @@ module Click
   def action_effect(pos)
     case @action_card[:card].kind 
     when :authority
-      card = @hand[pos].name
-      add_log("#{card}を除外した")
+      card = @hand[pos]
+      if card.kind == :threat
+        add_log("【脅威】は選べません")
+        return
+      end
+      add_log("#{card.name}を除外した")
       @hand.delete_at(pos)
       @action_card[:n] -= 1
     when :inheritance
