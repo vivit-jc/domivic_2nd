@@ -350,7 +350,11 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     pt = [0,1,2]
     pt.delete_at(rand(2))
     2.times do |i|
-      @era_missions.push ERAMISSION[pt[i]][rand(2)]
+      missions = ERAMISSION[pt[i]]
+      ["success_defense","success_invasion","growth_level_up","born_great_person"].each do |e|
+        missions.delete(e) if @era == 0
+      end
+      @era_missions.push missions.sample
     end
     @era_missions.push "culture"
   end
