@@ -7,9 +7,7 @@ module Tech
     @coin_pt[:science] = 0
     # 研究完了処理
     if tech_finished?(@selected_tech)
-      # 時代スコアのチェックとログ表示
-      score_str = calc_era_mission("research_tech")
-      add_log("研究完了: "+tech_j(@selected_tech)+score_str)
+      calc_finish_tech(@selected_tech)
       # 研究ポイントの溢れ処理
       @over_research_pt = @tech_prog[@selected_tech] - tech_cost(@selected_tech)
       @tech_prog[@selected_tech] = tech_cost(@selected_tech)
@@ -17,11 +15,6 @@ module Tech
       # 技術データが書きかけなので、無ければここでreturn あとで消す
       return unless TECHDATA[@selected_tech.to_s]
 
-      # 研究完了時にカードがもらえる処理
-      if cards = TECHDATA[@selected_tech.to_s]["finish_card"]
-        cards.each{|t|add_card(t[0],t[1])}
-      end
-      
       @selected_tech = nil
     end
   end
@@ -77,10 +70,40 @@ module Tech
     return @flat_tech_array.find{|e|e[0] == sym}[1]
   end
 
+  def calc_finish_tech(sym)
+      # 時代スコアのチェックとログ表示
+      score_str = calc_era_mission("research_tech",sym)
+      add_log("研究完了: "+tech_j(sym)+score_str)
+
+      # 研究完了時にカードがもらえる処理
+      if cards = TECHDATA[sym.to_s]["finish_card"]
+        cards.each{|t|add_card(t[0],t[1])}
+      end
+  end
+
   def sum_research_pt
     tech = @selected_tech
     return 0 unless tech
     return @tech_prog[tech]+@temp_research_pt+@coin_pt[:science]+@over_research_pt
+  end
+
+  def finish_tech_from_scientist(sym)
+    era = tech_era(sym)
+    return false if @tech_array[era].select{|t|@tech_prog[t[0]] >= tech_cost(t[0])}.size < 1 # 少なくとも1つ研究済みの時代でないと選べない
+    return false if @tech_prog[sym] >= tech_cost(sym) # 既に研究完了しているものは選べない
+    @tech_prog[sym] = tech_cost(sym)
+    calc_finish_tech(sym)
+    @click_mode = nil
+    @view_status = :main_view
+  end
+
+  def can_select_scientist_bonus?
+    finished_tech_in_eras = []
+    6.times do |i|
+      finished_tech_in_eras.push @tech_array[i].select{|t|@tech_prog[t[0]] >= tech_cost(t[0])}.size
+    end
+    selectable_tech_in_eras = finished_tech_in_eras.map{|e|e != 6 and e > 0}
+    return selectable_tech_in_eras.include?(true)
   end
 
   def make_tech_text(sym)

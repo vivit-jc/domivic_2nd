@@ -13,9 +13,9 @@ include Click
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :over_research_pt, :culture_pt, :temp_culture_pt, :temp_product_pt, :over_product_pt, 
-  :selected_tech, :selected_product,
+  :selected_tech, :selected_product, :selecting_great_person,
   :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, 
-  :buildings, :wonders, :units, :log, :archive, :coin, :coin_pt,
+  :buildings, :wonders, :units, :log, :archive, :coin, :coin_pt, :emblems,
   :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders, :era_missions
 
   def initialize
@@ -40,6 +40,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @inheritance = []
     @buildings = []
     @wonders = []
+    @emblems = []
     @units = [Unit.new(:warrior)]
     @invasion_bonus = BONUSDATA
     @coin = 100
@@ -55,7 +56,8 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @growth_level = 1
     @growth_pt = 0
     @great_person_num = 0    
-    @great_person_pt = 0
+    @great_person_pt = 19
+    @selecting_great_person = nil
 
     @temp_research_pt = 0
     @over_research_pt = 0
@@ -92,7 +94,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def click_turn_end
     return unless selectable_turn_end?
     if @hand.select{|c|c.kind == :threat}.size > @defense_event 
+      @action_pt = 0
       calc_defense_event
+    elsif @great_person_pt >= get_next_great_person_pt
+      give_great_person
     else
       turn_end
     end
@@ -129,7 +134,6 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     calc_end_turn_tech
     calc_end_turn_product
     calc_end_turn_growth
-    calc_great_person
     calc_era_mission("culture")
     go_next_era
   end
@@ -212,7 +216,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
       @tech_prog[@selected_tech] = 0
       add_log("#{tech_j(@selected_tech)}の研究がすべて失われた")
     when :great_person
-      if @great_person_pt < @great_person_num*10+10
+      if @great_person_pt < get_next_great_person_pt/2
         calc_penalty
         return
       end      
@@ -229,11 +233,13 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     end
   end
 
-  def calc_great_person
-    if @great_person_pt >= @great_person_num*20+20
-      @great_person_pt -= @great_person_num*20+20
-      @great_person_num += 1
-    end
+  def give_great_person
+    @selecting_great_person = [:scientist,:engineer,:merchant,:artist].sample
+    add_log(great_person_j(@selecting_great_person)+"が誕生した")
+    add_log("ボーナスを選択してください")
+    @click_mode = :select_great_person_bonus
+    @great_person_pt -= get_next_great_person_pt
+    @great_person_num += 1
   end
 
   def calc_research
@@ -359,10 +365,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @era_missions.push "culture"
   end
 
-  def calc_era_mission(str)
+  def calc_era_mission(str,tech=nil)
     return "" unless @era_missions.include?(str)
     score = get_era_score_from_str(str)
-    return "" if str == "research_tech" and tech_era(@selected_tech) <= @era
+    return "" if str == "research_tech" and tech_era(tech) <= @era
     return "" if str == "culture" and (@culture_pt < @era*20+10 or @era_culture_flag[@era])
     @era_score += score
     if str == "culture"
@@ -378,6 +384,10 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     ERAMISSION.each_with_index do |e,i|
       return i+1 if e.include?(str)
     end
+  end
+
+  def get_next_great_person_pt
+    return @great_person_num*20+20
   end
 
   def set_wonders
@@ -399,9 +409,13 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     add_log("#{n}コインを得た")
   end
 
+  def great_person_j(sym)
+    return {scientist: "大科学者", artist: "大芸術家", engineer: "大技術者", merchant: "大商人"}[sym]
+  end
+
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:inspiration,8],[:trade,2],[:threat,0],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:growth,2],[:inspiration,1],[:trade,2],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

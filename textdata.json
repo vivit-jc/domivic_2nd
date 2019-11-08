@@ -292,8 +292,8 @@
 			"archer":{
 				"name":"弓兵",
 				"cost":6,
-				"att":3,
-				"def":1,
+				"att":1,
+				"def":3,
 				"utype":"soldier"
 			},
 			"walls":{
@@ -306,7 +306,7 @@
 			"horseman":{
 				"name":"騎兵",
 				"cost":10,
-				"att":4,
+				"att":6,
 				"def":4,
 				"utype":"mount"
 			},
@@ -320,15 +320,15 @@
 			"knight":{
 				"name":"騎士",
 				"cost":10,
-				"att":6,
-				"def":0,
+				"att":10,
+				"def":7,
 				"utype":"mount"
 			},
 			"masket":{
 				"name":"マスケット兵",
 				"cost":10,
-				"att":6,
-				"def":0,
+				"att":7,
+				"def":7,
 				"utype":"soldier"
 			}
 		}

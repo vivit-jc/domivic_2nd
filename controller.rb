@@ -34,16 +34,16 @@ class Controller
   end
 
   def click_on_game
-
-    if @game.click_mode
-      if @game.click_mode == :select_invasion_bonus
-        @game.click_bonus(pos_bonus) if pos_bonus
-        return
-      end
-    else
-      @game.click_turn_end if pos_leftside == :turn_end
+    case @game.click_mode
+    when :select_invasion_bonus, :select_great_person_bonus, :select_wonder_from_engineer
+      @game.click_bonus(pos_bonus) if pos_bonus
+      return
+    when :select_tech_from_scientist
+      @game.finish_tech_from_scientist(@game.get_tech_sym_from_xy(pos_tech_view)) if pos_tech_view
+      return
     end
-
+  
+    @game.click_turn_end if pos_leftside == :turn_end
     @game.click_hand(pos_hand) if pos_hand and @game.view_status == :main_view
 
     # 技術選択画面か生産選択画面に行く、研究・生産へのコインの使用
@@ -128,6 +128,7 @@ class Controller
     return false
   end
 
+  # bonusは6個までを想定
   def pos_bonus
     6.times do |i|
       return i if mcheck(RIGHT_SIDE_WIDTH,5+i*22,440,5+i*22+20)
@@ -179,7 +180,7 @@ class Controller
     return false
   end
 
-  # return [:cards/:units/:bldgs, 上から何番目か]
+  # return [:cards/:units/:bldgs/:wonders, 上から何番目か]
   def pos_product_view
     obj = @game.unlocked_products
     card = obj[:cards]

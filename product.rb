@@ -20,12 +20,13 @@ module Product
 
   end
 
-  def set_producing_obj(obj)
-    if obj[0] == :wonders
-      @selected_product = @selectable_wonders[obj[1]]
+  # input [:cards/:units/:bldgs/:wonders, 上から何番目か]
+  def set_producing_obj(pos)
+    if pos[0] == :wonders
+      @selected_product = @selectable_wonders[pos[1]]
       @selectable_wonders.delete(@selected_product)
     else
-  	  @selected_product = @unlocked_products[obj[0]][obj[1]]
+  	  @selected_product = @unlocked_products[pos[0]][pos[1]]
     end
   end
 
@@ -157,6 +158,12 @@ module Product
     product = @selected_product
     return 0 unless product
     return get_product_prog(product)+@temp_product_pt+@coin_pt[:production]+@over_product_pt
+  end
+
+  def get_selectable_and_selected_wonders
+    wonders = @selectable_wonders
+    wonders.push @selected_product if WONDERSDATA[@selected_product]
+    return wonders
   end
 
 end

@@ -18,9 +18,9 @@ class View
     @tech_panel_back.box_fill(0,0,160,70,DARKGRAY)
     @const_panel_back = Image.new(160,70)
     @const_panel_back.box_fill(0,0,160,70,DARKGRAY)
-    @deckinfoback = Image.new(60,480)
-    @trashinfoback = Image.new(60,480)
-    @erainfoback = Image.new(310,480)
+    @deckinfoback = Image.new(80,480)
+    @trashinfoback = Image.new(80,480)
+    @erainfoback = Image.new(310,201)
     @bldginfoback = Image.new(200,480)
 
     @tech_array = @game.tech_array
@@ -90,9 +90,19 @@ class View
   end
 
   def draw_hand
-    if @game.click_mode == :select_invasion_bonus
+    case @game.click_mode
+    when :select_invasion_bonus
       @game.invasion_bonus[0].each_with_index do |e,i|
         Window.draw_font(RIGHT_SIDE_WIDTH,5+i*22,make_bonus_str(i),Font20)
+      end
+      return
+    when :select_great_person_bonus
+      draw_great_person_bonus
+      return
+    when :select_wonder_from_engineer
+      wonders = @game.get_selectable_and_selected_wonders
+      wonders.each_with_index do |w,i|
+        Window.draw_font(RIGHT_SIDE_WIDTH,5+i*22,WONDERSDATA[w].name,Font20)
       end
       return
     end
@@ -129,17 +139,17 @@ class View
     Window.draw_font(45,83,"#{@game.growth_pt}/#{@game.growth_level*4-2}",Font16)
     Window.draw(5,100,@growth_gage)
     Window.draw(5,115,Image[:greatperson])
-    Window.draw_font(45,135,"#{@game.great_person_pt}/#{@game.great_person_num*20+20}",Font16)
+    Window.draw_font(45,135,"#{@game.great_person_pt}/#{@game.get_next_great_person_pt}",Font16)
     Window.draw(5,153,@great_person_gage)
 
     Window.draw(5,170,Image[:construction])
     Window.draw(47,170,Image[:money_bag])
-    Window.draw_font(8,205,sprintf("% 2d",@game.buildings.size.to_s),Font20)
+    Window.draw_font(8,205,sprintf("% 2d",(@game.buildings.size+@game.wonders.size)),Font20)
     Window.draw_font(45,205,sprintf("% 2d",@game.coin),Font20)
 
     Window.draw(5,240,Image[:emblem])
     Window.draw(47,240,Image[:culture])
-    Window.draw_font(8,280," 2",Font20)
+    Window.draw_font(8,280,sprintf("% 2d",@game.emblems.size),Font20)
     Window.draw_font(45,280,sprintf("% 2d",@game.culture_pt+@game.temp_culture_pt),Font20)
     
   end
@@ -236,8 +246,6 @@ class View
   end
 
   def draw_tech_view
-    Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
-    Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
     @tech_array.reverse.each_with_index do |t,i|
       draw_tech_view_row(t,50+(i%2)*25,10+50*i)
     end
@@ -248,6 +256,14 @@ class View
         Window.draw_font(50,330+18*i,t,Font16)
       end
     end
+
+    if @game.click_mode == :select_tech_from_scientist
+      Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"研究済みの技術が1つ以上ある世代の技術を選んでください",Font16)
+    else
+      Window.draw(RIGHT_SIDE_WIDTH,BOTTOM_Y+50,@tech_view_back_button_back)
+      Window.draw_font(RIGHT_SIDE_WIDTH+65,BOTTOM_Y+52,"戻る",Font16)
+    end
+    
   end
 
   def draw_tech_view_row(tech_array,x,y)
@@ -303,6 +319,28 @@ class View
 
   end
 
+  def draw_great_person_bonus
+    case @game.selecting_great_person
+    when :scientist
+      texts = ["【ひらめき8】を#{@game.era+1}枚得る","技術1つを即座に研究完了する"]
+    when :artist
+      texts = ["【流行8】を#{@game.era+1}枚得る","《守護》を得る"]
+    when :engineer
+      texts = ["世界遺産を即座に生産する","《革新》を得る"]
+    when :merchant
+      texts = ["コインを#{((@game.era+1)*4)}枚得る","《投資》を得る"]
+    end
+    texts.each_with_index do |t,i|
+      color = C_WHITE
+      if @game.selecting_great_person == :scientist and i == 1 and !@game.can_select_scientist_bonus?
+        color = DARKGRAY
+      elsif @game.selecting_great_person == :engineer and i == 0 and @game.get_selectable_and_selected_wonders.size == 0
+        color = DARKGRAY
+      end
+      Window.draw_font(RIGHT_SIDE_WIDTH,5+i*22,t,Font20,{color: color})
+    end
+  end
+
   def draw_log_view
     (@game.archive+@game.log).reverse.each_with_index do |text,i|
       Window.draw_font(10, 10+i*18, text, Font16)
@@ -339,14 +377,15 @@ class View
   end
 
   def refresh_back
-    @deckinfoback = Image.new(60,480)
-    @trashinfoback = Image.new(60,480)
+    @deckinfoback = Image.new(80,480)
+    @trashinfoback = Image.new(80,480)
     @erainfoback = Image.new(310,480)
     @bldginfoback = Image.new(200,480)
-    @deckinfoback.box_fill(0,0,60,@game.deck.size*18+6,DARKGRAY) if @game.deck.size > 0
-    @trashinfoback.box_fill(0,0,60,@game.trash.size*18+6,DARKGRAY) if @game.trash.size > 0
-    @erainfoback.box_fill(0,0,310,(ERAMISSION[@game.era].size+8)*18+6,DARKGRAY)
-    @bldginfoback.box_fill(0,0,200,@game.buildings.size*18+6,DARKGRAY) if @game.buildings.size > 0
+    @deckinfoback.box_fill(0,0,80,@game.deck.size*18+6,DARKGRAY) if @game.deck.size > 0
+    @trashinfoback.box_fill(0,0,80,@game.trash.size*18+6,DARKGRAY) if @game.trash.size > 0
+    @erainfoback.box_fill(0,0,310,201,DARKGRAY)
+    bnum = @game.buildings.size+@game.wonders.size
+    @bldginfoback.box_fill(0,0,200,bnum*18+6,DARKGRAY) if bnum > 0
   end
 
   def refresh_gages

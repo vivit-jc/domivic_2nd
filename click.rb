@@ -73,26 +73,90 @@ module Click
 
   def click_bonus(pos)
   	return if @click_mode == :select_invasion_bonus and !@invasion_bonus[0][pos]
-  	if @click_mode == :select_invasion_bonus
-  	  bonus = @invasion_bonus[0][pos].split(",")
-  	  num = bonus[1].to_i
-  	  case(bonus[0])
-  	  when "get_province"
-  	  	@province += num
-  	  	add_log("属州を得た")
-  	  when "get_coin"
-  	  	add_coin(num)
-  	  when "down_threat"
-  	  	@threat -= num
-  	  	add_log("脅威Lvが下がった(#{num})")
-  	  when "get_great_general"
-  	  	add_log("大将軍が誕生！")
-  	  end
-  	  @invasion_bonus[0].delete_at(pos)
-  	  @invasion_bonus.delete_at(0) if @invasion_bonus[0].size == 0
-  	  @click_mode = nil
-  	end
+  	case @click_mode
+    when :select_invasion_bonus
+      select_invasion_bonus(pos)
+    when :select_great_person_bonus
+      select_great_person_bonus(pos)
+    when :select_wonder_from_engineer
+      select_wonder_from_engineer(pos)
+    end
   end
 
+  def select_invasion_bonus(pos)
+    bonus = @invasion_bonus[0][pos].split(",")
+    num = bonus[1].to_i
+    case(bonus[0])
+    when "get_province"
+      @province += num
+      add_log("属州を得た")
+    when "get_coin"
+      add_coin(num)
+    when "down_threat"
+      @threat -= num
+      add_log("脅威Lvが下がった(#{num})")
+    when "get_great_general"
+      add_log("大将軍が誕生！")
+    end
+    @invasion_bonus[0].delete_at(pos)
+    @invasion_bonus.delete_at(0) if @invasion_bonus[0].size == 0
+    @click_mode = nil
+  end
+
+  def select_great_person_bonus(pos)
+    return false if pos >= 2
+    case @selecting_great_person
+    when :scientist
+      if pos == 0
+        (@era+1).times{@trash.push Card.new(:inspiration,8)}
+        add_log("【ひらめき8】を#{@era+1}枚得た")
+      else
+        if can_select_scientist_bonus?
+          @click_mode = :select_tech_from_scientist
+          @view_status = :tech_view
+        else
+          add_log("研究できる技術がありません")
+        end
+        return # @click_modeがnilになってはまずいのでreturnする
+      end
+    when :artist
+      if pos == 0
+        (@era+1).times{@trash.push Card.new(:trend,8)}
+        add_log("【流行8】を#{@era+1}枚得た")
+      else
+        @emblems.push :guardian
+        add_log("《守護》を得た")
+      end         
+    when :engineer
+      if pos == 0
+        if @selectable_wonders.size == 0 and !WONDERSDATA[@selected_product]
+          add_log("建設できる世界遺産がありません")
+        else
+          add_log("建設する世界遺産を選択してください")
+          @click_mode = :select_wonder_from_engineer
+        end
+        return # @click_modeがnilになってはまずいのでreturnする
+      else
+        @emblems.push :innovation
+        add_log("《革新》を得た")
+      end
+    when :merchant
+      if pos == 0
+        add_coin((@era+1)*4)
+      else
+        @emblems.push :investment
+        add_log("《投資》を得た")
+      end
+    end
+    @click_mode = nil
+  end
+
+  def select_wonder_from_engineer(pos)
+    wonders = get_selectable_and_selected_wonders
+    return if pos >= wonders.size
+    @wonders.push wonders[pos]
+    add_log("生産完了: "+product_j(wonders[pos])+calc_era_mission("build_wonder"))
+    @click_mode = nil
+  end
 
 end
