@@ -25,7 +25,8 @@
 			"unlock_unit":["walls"]
 		},
 		"monarchy":{
-			"finish_card":[["authority",1],["invasion",0]]
+			"finish_card":[["authority",1]],
+			"unlock_card":[["invasion",0]]
 		},
 		"mathematics":{
 			"finish_card":[["science",3]],
@@ -75,13 +76,14 @@
 			"unlock_bldg":["workshop"]
 		},
 		"guilds":{
+			"unlock_card":[["tax_collection",2]],
 			"unlock_bldg":["market"]
 		},
 		"gunpowder":{
 			"unlock_unit":["masket"]
 		},
 		"printing_press":{
-			"unlock_card":[["science",3],["culture",3],["inheritance",1]]
+			"unlock_card":[["science",3],["culture",3],["spreading",0]]
 		},
 		"navigation":{
 			"finish_card":[["trade",3]],
@@ -92,52 +94,59 @@
 			"unlock_card":[["politics",0]]
 		},
 		"banking":{
-
+			"finish_card":[["tax_collection",2]],
+			"unlock_bldg":["bank"]
 		},
 		"military_science":{
-
+			"finish_effect":["get_great_person(:general)"],
+			"unlock_bldg":["military_academy"]
 		},
 		"philosophy":{
 
 		},
-		"physics":{
-
+		"scientific_method":{
+			"finish_card":["science",10],
+			"unlock_card":["science",10]
 		},
 		"steam_power":{
-
+			"unlock_card":["production",10],
+			"unlock_bldg":["railroad"]
 		},
 		"steel":{
-
+			"unlock_unit":["canon"]
 		},
 		"biology":{
-
+			"effect":"成長ptを追加で1ターン保持する　兵士ユニットの待機上限+1"
 		},
 		"corporation":{
-
+			"finish_card":["trade",4]
 		},
 		"assembly_line":{
-
+			"unlock_unit":["infantry"]
 		},
 		"electricity":{
-
+			"finish_card":["production",10],
+			"unlock_card":["growth",10]
 		},
 		"computers":{
-
+			"finish_card":["science",15],
+			"unlock_card":["science",15]
 		},
 		"flight":{
-
+			"unlock_unit":["aricraft"]
 		},
 		"fission":{
-
+			"effect":"《守護》を10個得る"
 		},
 		"radio":{
-
+			"unlock_bldg":["broadcast_tower"]
 		},
 		"mass_media":{
-
+			"finish_card":[["trend",10],["trend",10],["trend",10]]
 		},
 		"plastics":{
-
+			"finish_card":["production",10],
+			"effect":"成長Lv上昇に必要な成長pt-25"
 		}
 	},
 	"product":{
@@ -170,7 +179,7 @@
 			"trading_post":{
 				"cost": 12,
 				"name": "交易所",
-				"text": "アクションカードを1枚使用するたびにコイン+1"
+				"text": "コインを得るたびにコイン+1"
 			},
 			"temple":{
 				"cost": 12,
@@ -195,12 +204,17 @@
 			"market":{
 				"cost": 12,
 				"name": "市場",
-				"text": "カードが1枚除外されるたびにコイン+2"
+				"text": "アクションカードが使われるたびにコイン+1"
 			},
 			"university":{
 				"cost": 12,
 				"name": "大学",
 				"text": "毎ターン、手札の研究カード1枚につき研究+2、文化+1"
+			},
+			"bank":{
+				"cost": 12,
+				"name": "銀行",
+				"text": "考え中"
 			}
 		},
 		"card":{
@@ -218,6 +232,10 @@
 			},
 			"culture":{
 				"name":"文化",
+				"cost":[5,10,15,20]
+			},
+			"tax_collection":{
+				"name":"徴税",
 				"cost":[5,10,15,20]
 			},
 			"authority":{
@@ -247,8 +265,13 @@
 			"politics":{
 				"name":"政治",
 				"cost":[],
-				"text":"アクション: アクションカードをさらに2枚まで使える。カードを1枚引く。",
+				"text":"アクション: アクションカードをさらに2枚使える。カードを1枚引く。",
 				"action":true
+			},
+			"spreading":{
+				"name":"普及",
+				"cost":[],
+				"text":"アクション: 手札1枚と同じカードを得る"
 			},
 			"inspiration":{
 				"name":"ひらめき",
@@ -330,6 +353,27 @@
 				"att":7,
 				"def":7,
 				"utype":"soldier"
+			},
+			"infantry":{
+				"name":"歩兵",
+				"cost":10,
+				"att":10,
+				"def":10,
+				"utype":"soldier"
+			},
+			"canon":{
+				"name":"カノン砲",
+				"cost":10,
+				"att":10,
+				"def":10,
+				"utype":"siege"				
+			},
+			"aricraft":{
+				"name":"戦闘機",
+				"cost":10,
+				"att":10,
+				"def":10,
+				"utype":"air"				
 			}
 		}
 	},
@@ -337,13 +381,13 @@
 		"stone_henge":{
 			"name":"ストーン・ヘンジ",
 			"cost":10,
-			"text":"考え中",
+			"text":"毎ターン、成長+1",
 			"era":0
 		},
 		"pyramid":{
 			"name":"ピラミッド",
 			"cost":10,
-			"text":"時代が変わるたびに、時代スコア+1",
+			"text":"時代スコアを1得た状態で新しい時代に進む",
 			"era":0
 		},
 		"great_library":{
@@ -361,25 +405,25 @@
 		"temple_of_artemis":{
 			"name":"アルテミス神殿",
 			"cost":10,
-			"text":"山札をリシャッフルするたびに、時代の数x4コインを得る",
+			"text":"山札をリシャッフルするたびに、時代の数のコインを得る",
 			"era":0
 		},
 		"hanging_garden":{
 			"name":"空中庭園",
 			"cost":10,
-			"text":"考え中",
+			"text":"成長ptを追加で1ターン保持する",
 			"era":1
 		},
 		"statue_of_zeus":{
 			"name":"ゼウス像",
 			"cost":10,
-			"text":"考え中",
+			"text":"攻撃に成功するたびにコイン2を得る",
 			"era":1
 		},
 		"great_lighthouse":{
 			"name":"ファロス灯台",
 			"cost":10,
-			"text":"交易カードをコインを支払わずに使えるようになる",
+			"text":"【交易3】を2枚得る",
 			"era":1
 		},
 		"colossus_of_rhodes":{
@@ -391,7 +435,7 @@
 		"tomb_of_mausolus":{
 			"name":"マウソロス霊廟",
 			"cost":10,
-			"text":"考え中",
+			"text":"除外されたカード2枚につき脅威Lvを1下げる",
 			"era":1
 		}
 	},
@@ -412,5 +456,27 @@
 	"era_bonus":[
 		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(6)","add_card(:inspiration,8)"]],
 		[3,6,["add_card(:stagnation,0)","add_card(:stagnation,0)"],["add_coin(3)"],["add_coin(2)","add_card(:inspiration,8)"]]
-	]
+	],
+	"emblems":{
+		"investment":{
+			"name":"投資",
+			"text":"毎ターン、属州2つにつきコイン+1"
+		},
+		"guardians":{
+			"name":"守護",
+			"text":"【脅威】を自動で除外する"
+		},
+		"innovation":{
+			"name":"革新",
+			"text":"すべての建物、世界遺産、カード、ユニットのコスト-10"
+		},
+		"offensive":{
+			"name":"攻勢",
+			"text":"すべての兵士、騎乗、攻城ユニットの攻撃力+1"
+		},
+		"defensive":{
+			"name":"堅固",
+			"text":"すべての兵士、騎乗、防衛ユニットの防御力+1"
+		}
+	}
 }
