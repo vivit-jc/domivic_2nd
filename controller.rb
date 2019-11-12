@@ -43,8 +43,10 @@ class Controller
       return
     end
   
-    @game.click_turn_end if pos_leftside == :turn_end
-    @game.click_hand(pos_hand) if pos_hand and @game.view_status == :main_view
+    if @game.view_status == :main_view
+      @game.click_turn_end if pos_leftside == :turn_end
+      @game.click_hand(pos_hand) if pos_hand 
+    end
 
     # 技術選択画面か生産選択画面に行く、研究・生産へのコインの使用
     if @game.view_status == :main_view
@@ -94,6 +96,7 @@ class Controller
         @game.view_status = :main_view
         return
       end
+      return false unless @game.product_selectable?(pos_product_view)
       @game.set_producing_obj(pos_product_view)
       @game.view_status = :main_view
     end

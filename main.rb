@@ -55,7 +55,7 @@ TECH_1 = [[:agriculture,"農業"],[:writing,"筆記"],[:archery,"弓術"],[:meta
 TECH_2 = [[:monarchy,"君主政治"],[:mathematics,"数学"],[:law,"法律"],[:currency,"通貨"],[:horse_riding,"騎乗"],[:religion,"宗教"],[:irrigation,"灌漑"]]
 TECH_3 = [[:chivalry,"騎士道"],[:education,"教育"],[:metal_casting,"鋳金"],[:music,"音楽"],[:machinery,"機械"],[:guilds,"ギルド"]]
 TECH_4 = [[:gunpowder,"火薬"],[:printing_press,"活版印刷"],[:navigation,"航海術"],[:nationalism,"ナショナリズム"],[:banking,"銀行制度"],[:military_science,"軍事学"],[:philosophy,"哲学"]]
-TECH_5 = [[:physics,"物理学"],[:steam_power,"蒸気機関"],[:steel,"鋼鉄"],[:biology,"生物学"],[:corporation,"企業"],[:assembly_line,"大量生産"]]
+TECH_5 = [[:scientific_method,"科学的手法"],[:steam_power,"蒸気機関"],[:steel,"鋼鉄"],[:biology,"生物学"],[:corporation,"企業"],[:assembly_line,"大量生産"]]
 TECH_6 = [[:electricity,"電気"],[:computers,"コンピューター"],[:flight,"飛行機"],[:fission,"核分裂"],[:radio,"無線通信"],[:mass_media,"マスメディア"],[:plastics,"プラスチック"]]
 
 

@@ -326,6 +326,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   end
 
+  def sum_point_in_deck(kind)
+    r = 0
+    @deck.each do |c|
+      r += c.num if c.kind == kind
+    end
+    return r
+  end
+
   def get_province_pt(kind)
     return @province * @province_pt[kind]
   end
@@ -338,6 +346,14 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
   def get_def
     return 0 if @units.size == 0
     return @units.map{|u|u.def}.inject{|sum,n|sum+n}
+  end
+
+  def count_unit_at_utype(utype)
+    r = 0
+    @units.each do |u|
+      r += 1 if u.utype == utype
+    end
+    return r
   end
 
   def give_era_reward

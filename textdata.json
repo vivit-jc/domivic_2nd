@@ -215,6 +215,16 @@
 				"cost": 12,
 				"name": "銀行",
 				"text": "考え中"
+			},
+			"military_academy":{
+				"cost": 12,
+				"name": "士官学校",
+				"text": "考え中"			
+			},
+			"broadcast_tower":{
+				"cost": 12,
+				"name": "放送塔",
+				"text": "考え中"
 			}
 		},
 		"card":{

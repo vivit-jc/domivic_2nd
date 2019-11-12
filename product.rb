@@ -80,6 +80,14 @@ module Product
     end
   end
 
+  # input [:cards/:units/:bldgs/:wonders, 上から何番目か]
+  def get_product_selectable?(pos)
+    return true unless pos[0] == :unit # 今のところ、選ぶときに制限がかかるのはユニットのみ
+    unit = @unlocked_products[pos[0]][pos[1]]
+    return false if UNITDATA[unit].utype == "soldier" and count_unit_at_utype("soldier")*3 >= sum_point_in_deck(:growth)
+    
+  end
+
   def init_prodoct_prog(obj)
     if obj.class == Array
       @product_prog[obj[0]] = Array.new(10,0) unless @product_prog[obj[0]]
