@@ -328,7 +328,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def sum_point_in_deck(kind)
     r = 0
-    @deck.each do |c|
+    (@deck+@trash+@hand).each do |c|
       r += c.num if c.kind == kind
     end
     return r
@@ -354,6 +354,16 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
       r += 1 if u.utype == utype
     end
     return r
+  end
+
+  def get_count_bonus(utype)
+    bonus = 0
+    if utype == "soldier"
+      bonus += 2 if @buildings.include?("barracks")
+    elsif utype == "mount"
+      bonus += 2 if @buildings.include?("stable")
+    end
+    return bonus
   end
 
   def give_era_reward
@@ -431,7 +441,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def init_deck
     array = []
-    [[:authority,2],[:growth,2],[:growth,2],[:inspiration,1],[:trade,2],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
+    [[:authority,2],[:growth,2],[:growth,2],[:science,4],[:trade,2],[:production,5],[:riot,1],[:trend,5]].each do |sym,n|
 #    [[:science,1],[:science,1],[:growth,1],[:growth,1],[:growth,1],[:production,1],[:production,1]].each do |sym,n|
       array.push Card.new(sym,n)
     end

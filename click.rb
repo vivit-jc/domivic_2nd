@@ -153,9 +153,11 @@ module Click
 
   def select_wonder_from_engineer(pos)
     wonders = get_selectable_and_selected_wonders
-    return if pos >= wonders.size
-    @wonders.push wonders[pos]
-    add_log("生産完了: "+product_j(wonders[pos])+calc_era_mission("build_wonder"))
+    return false if pos >= wonders.size
+    wonder = wonders[pos]
+    @wonders.push wonder
+    @selectable_wonders.delete(wonder)
+    add_log("生産完了: "+product_j(wonder)+calc_era_mission("build_wonder"))
     @click_mode = nil
   end
 

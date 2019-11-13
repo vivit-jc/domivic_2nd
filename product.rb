@@ -81,11 +81,27 @@ module Product
   end
 
   # input [:cards/:units/:bldgs/:wonders, 上から何番目か]
-  def get_product_selectable?(pos)
-    return true unless pos[0] == :unit # 今のところ、選ぶときに制限がかかるのはユニットのみ
+  def product_selectable?(pos)
+    return true unless pos[0] == :units # 今のところ、選ぶときに制限がかかるのはユニットのみ
     unit = @unlocked_products[pos[0]][pos[1]]
-    return false if UNITDATA[unit].utype == "soldier" and count_unit_at_utype("soldier")*3 >= sum_point_in_deck(:growth)
-    
+    return true if UNITDATA[unit].utype == "soldier" and soldier_selectable?
+    return true if UNITDATA[unit].utype == "mount" and mount_selectable?
+    return false
+  end
+
+  def soldier_selectable?
+    return true if count_unit_at_utype("soldier") < get_count_bonus("soldier")
+    return (count_unit_considering_bonus("soldier")+1)*3 <= sum_point_in_deck(:growth)
+  end
+
+  def mount_selectable?
+    return true if count_unit_at_utype("mount") < get_count_bonus("mount")
+    return (count_unit_considering_bonus("mount")+1)*7 <= @deck.size+@trash.size+@hand.size
+  end
+
+  def count_unit_considering_bonus(utype)
+    return 0 if count_unit_at_utype(utype) < get_count_bonus(utype)
+    return count_unit_at_utype(utype) - get_count_bonus(utype)
   end
 
   def init_prodoct_prog(obj)
@@ -172,6 +188,14 @@ module Product
     wonders = @selectable_wonders
     wonders.push @selected_product if WONDERSDATA[@selected_product]
     return wonders
+  end
+
+  def max_soldier
+    return (sum_point_in_deck(:growth)/3).floor + get_count_bonus("soldier")
+  end
+
+  def max_mount
+    return ((@deck+@trash+@hand).size/7).floor + get_count_bonus("mount")
   end
 
 end

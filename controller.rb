@@ -96,6 +96,7 @@ class Controller
         @game.view_status = :main_view
         return
       end
+      p @game.product_selectable?(pos_product_view)
       return false unless @game.product_selectable?(pos_product_view)
       @game.set_producing_obj(pos_product_view)
       @game.view_status = :main_view

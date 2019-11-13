@@ -294,8 +294,11 @@ class View
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
       unit = UNITDATA[p]
-      Window.draw_font(250, 35+18*i, unit.name, Font16)
-      Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16)
+      color = C_WHITE
+      color = DARKGRAY if UNITDATA[p].utype == "soldier" and !@game.soldier_selectable?
+      color = DARKGRAY if UNITDATA[p].utype == "mount" and !@game.mount_selectable?
+      Window.draw_font(250, 35+18*i, unit.name, Font16, {color: color})
+      Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16, {color: color})
     end
     @game.selectable_wonders.each_with_index do |p,i|
       wonder = WONDERSDATA[p]
@@ -316,7 +319,8 @@ class View
         end
       end
     end
-
+    Window.draw_font(10,400,"兵士ユニット #{@game.count_unit_at_utype("soldier")}/#{@game.max_soldier}",Font16)
+    Window.draw_font(200,400,"騎乗ユニット #{@game.count_unit_at_utype("mount")}/#{@game.max_mount}",Font16)
   end
 
   def draw_great_person_bonus

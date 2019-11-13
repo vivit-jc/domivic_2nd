@@ -23,6 +23,8 @@ attr_reader :kind, :name, :att, :def, :active, :selected, :utype, :utype_j
   	  return "攻城"
   	when "defender"
   	  return "防衛"
+    when "air"
+      return "航空"
   	end
   end
 
