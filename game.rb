@@ -328,7 +328,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
 
   def sum_point_in_deck(kind)
     r = 0
-    @deck.each do |c|
+    (@deck+@hand+@trash).each do |c|
       r += c.num if c.kind == kind
     end
     return r

@@ -290,12 +290,14 @@ class View
     @game.unlocked_products[:bldgs].each_with_index do |p,i|
       bldg = BLDGDATA[p]
       Window.draw_font(130, 35+18*i, bldg.name, Font16)
-      Window.draw_font(220, 35+18*i, @game.product_cost(p), Font16)      
+      Window.draw_font(220, 35+18*i, @game.product_cost(p), Font16)
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
       unit = UNITDATA[p]
-      Window.draw_font(250, 35+18*i, unit.name, Font16)
-      Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16)
+      color = C_WHITE
+      color = DARKGRAY unless @game.product_selectable?([:units,i])
+      Window.draw_font(250, 35+18*i, unit.name, Font16, {color: color})
+      Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16, {color: color})
     end
     @game.selectable_wonders.each_with_index do |p,i|
       wonder = WONDERSDATA[p]
