@@ -164,7 +164,8 @@
 			"barracks":{
 				"cost": 12,
 				"name": "兵舎",
-				"text": "兵士ユニットの待機上限+2"				
+				"text": "兵士ユニットの待機上限+2",
+				"effect": "add_max_soldier,2"
 			},
 			"shrine":{
 				"cost": 12,
@@ -189,7 +190,8 @@
 			"stable":{
 				"cost": 12,
 				"name": "厩舎",
-				"text": "馬ユニットの待機上限+2"
+				"text": "馬ユニットの待機上限+2",
+				"effect": "add_max_mount,2"
 			},
 			"aqueduct":{
 				"cost": 12,

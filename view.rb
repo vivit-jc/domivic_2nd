@@ -305,6 +305,10 @@ class View
       Window.draw_font(555, 35+18*i, @game.product_cost(p), Font16)
     end
 
+    # ユニット待機上限を表示
+    Window.draw_font(50,400,"兵士ユニット #{@game.count_unit_at_utype(:soldier)}/#{@game.max_unit(:soldier)}",Font16)
+    Window.draw_font(220,400,"騎乗ユニット #{@game.count_unit_at_utype(:mount)}/#{@game.max_unit(:mount)}",Font16)
+
     # マウスオーバーで説明を表示
     pos_product = @controller.pos_product_view
     if pos_product and pos_product != :back

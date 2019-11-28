@@ -84,9 +84,15 @@ module Product
   def product_selectable?(pos)
     return true unless pos[0] == :units # 今のところ、選ぶときに制限がかかるのはユニットのみ
     unit = @unlocked_products[pos[0]][pos[1]]
-    return false if UNITDATA[unit].utype == "soldier" and (count_unit_at_utype("soldier")+1)*3 > sum_point_in_deck(:growth)
-    return false if UNITDATA[unit].utype == "mount" and (count_unit_at_utype("mount")+1)*7 > @deck.size + @trash.size + @hand.size
+    return false if UNITDATA[unit].utype == "soldier" and count_unit_at_utype("soldier") >= max_unit(:soldier)
+    return false if UNITDATA[unit].utype == "mount" and count_unit_at_utype("mount") >= max_unit(:mount)
     return true
+  end
+
+  def max_unit(utype)
+    return (sum_point_in_deck(:growth)/3).floor+get_bldg_effect("add_max_soldier") if utype == :soldier
+    return ((@deck.size + @trash.size + @hand.size)/7).floor+get_bldg_effect("add_max_mount") if utype == :mount
+    return 0
   end
 
   def init_prodoct_prog(obj)
@@ -173,6 +179,17 @@ module Product
     wonders = @selectable_wonders
     wonders.push @selected_product if WONDERSDATA[@selected_product]
     return wonders
+  end
+
+  # input effectに使われるべき第一引数
+  # output 多分あとで変わるけどいつも数字を返すようになってると嬉しい
+  def get_bldg_effect(effect)
+    @buildings.each do |b|
+      e = BLDGDATA[b].effect.split(",")
+      next if effect != e[0]
+      return e[1].to_i
+    end
+    return 0
   end
 
 end
