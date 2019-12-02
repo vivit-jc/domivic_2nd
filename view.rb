@@ -113,9 +113,11 @@ class View
       back = (card.action? and @game.action_pt > 0) ? @actioncardback : @cardback
       Window.draw(x,y,back)
       Window.draw(x+2,y+2,Image[card.kind])
+      Window.draw_font(x+2,y+38,card.name,Font16)
+      next if card.kind == :cancel
       Window.draw_font(x+45,y+3,"★",Font12) if card.action? and @game.action_pt > 0
       Window.draw_font(x+45,y+3,"◎",Font12) if card.instant?
-      Window.draw_font(x+2,y+38,card.name,Font16)
+      
     end
   end
 
