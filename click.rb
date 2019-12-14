@@ -8,6 +8,7 @@ module Click
       if @action_card[:n] == 0
         @click_mode = nil
         @action_card = nil
+
       end
       return
     end
@@ -47,10 +48,16 @@ module Click
       end
     end
     @action_pt -= 1
+    @hand.push Card.new(:cancel,0) if @click_mode == :select_hand
     
   end
 
   def action_effect(pos)
+    if @hand[pos].kind == :cancel
+      @action_card[:n] = 0
+      @hand.delete_if{|c|c.kind == :cancel}
+      return
+    end
     case @action_card[:card].kind 
     when :authority
       card = @hand[pos]
@@ -69,6 +76,7 @@ module Click
       calc_all_points
       @action_card[:n] -= 1
     end
+    @hand.delete_if{|c|c.kind == :cancel} if @action_card[:n] == 0
   end
 
   def click_unit(pos)

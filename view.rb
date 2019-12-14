@@ -113,9 +113,11 @@ class View
       back = (card.action? and @game.action_pt > 0) ? @actioncardback : @cardback
       Window.draw(x,y,back)
       Window.draw(x+2,y+2,Image[card.kind])
+      Window.draw_font(x+2,y+38,card.name,Font16)
+      next if card.kind == :cancel
       Window.draw_font(x+45,y+3,"★",Font12) if card.action? and @game.action_pt > 0
       Window.draw_font(x+45,y+3,"◎",Font12) if card.instant?
-      Window.draw_font(x+2,y+38,card.name,Font16)
+      
     end
   end
 
@@ -290,13 +292,12 @@ class View
     @game.unlocked_products[:bldgs].each_with_index do |p,i|
       bldg = BLDGDATA[p]
       Window.draw_font(130, 35+18*i, bldg.name, Font16)
-      Window.draw_font(220, 35+18*i, @game.product_cost(p), Font16)      
+      Window.draw_font(220, 35+18*i, @game.product_cost(p), Font16)
     end
     @game.unlocked_products[:units].each_with_index do |p,i|
       unit = UNITDATA[p]
       color = C_WHITE
-      color = DARKGRAY if UNITDATA[p].utype == "soldier" and !@game.soldier_selectable?
-      color = DARKGRAY if UNITDATA[p].utype == "mount" and !@game.mount_selectable?
+      color = DARKGRAY unless @game.product_selectable?([:units,i])
       Window.draw_font(250, 35+18*i, unit.name, Font16, {color: color})
       Window.draw_font(340, 35+18*i, @game.product_cost(p), Font16, {color: color})
     end
@@ -305,6 +306,10 @@ class View
       Window.draw_font(370, 35+18*i, wonder.name, Font16)
       Window.draw_font(555, 35+18*i, @game.product_cost(p), Font16)
     end
+
+    # ユニット待機上限を表示
+    Window.draw_font(50,400,"兵士ユニット #{@game.count_unit_at_utype(:soldier)}/#{@game.max_unit(:soldier)}",Font16)
+    Window.draw_font(220,400,"騎乗ユニット #{@game.count_unit_at_utype(:mount)}/#{@game.max_unit(:mount)}",Font16)
 
     # マウスオーバーで説明を表示
     pos_product = @controller.pos_product_view
@@ -319,8 +324,6 @@ class View
         end
       end
     end
-    Window.draw_font(10,400,"兵士ユニット #{@game.count_unit_at_utype("soldier")}/#{@game.max_soldier}",Font16)
-    Window.draw_font(200,400,"騎乗ユニット #{@game.count_unit_at_utype("mount")}/#{@game.max_mount}",Font16)
   end
 
   def draw_great_person_bonus

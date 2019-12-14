@@ -41,6 +41,10 @@ class Controller
     when :select_tech_from_scientist
       @game.finish_tech_from_scientist(@game.get_tech_sym_from_xy(pos_tech_view)) if pos_tech_view
       return
+    when :select_hand
+      return unless pos_hand
+      @game.click_hand(pos_hand)
+      return
     end
   
     if @game.view_status == :main_view
