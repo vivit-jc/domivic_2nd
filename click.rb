@@ -71,6 +71,21 @@ module Click
     end
   end
 
+  def click_unit(pos)
+    if @click_mode == :delete_unit
+      if @delete_unit == pos
+        unit = @units.delete_at[pos]
+        add_log("")
+      else
+        @click_mode = nil
+        @delete_unit = nil
+      end
+    else
+      @click_mode = :delete_unit
+      @delete_unit = pos
+    end
+  end
+
   def click_bonus(pos)
   	return if @click_mode == :select_invasion_bonus and !@invasion_bonus[0][pos]
   	case @click_mode
