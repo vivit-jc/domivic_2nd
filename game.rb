@@ -13,7 +13,7 @@ include Click
 attr_accessor :status, :page, :view_status
 attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :trash, :growth_level, :great_person_pt,
   :great_person_num, :growth_pt, :temp_research_pt, :over_research_pt, :culture_pt, :temp_culture_pt, :temp_product_pt, :over_product_pt, 
-  :selected_tech, :selected_product, :selecting_great_person,
+  :selected_tech, :selected_product, :selecting_great_person, :delete_unit,
   :era, :era_score, :tech_prog, :tech_array, :flat_tech_array, :unlocked_products, 
   :buildings, :wonders, :units, :log, :archive, :coin, :coin_pt, :emblems,
   :action_pt, :target, :click_mode, :threat, :invasion_bonus, :province, :selectable_wonders, :era_missions
@@ -41,7 +41,7 @@ attr_reader :game_status, :game_status_memo, :messages, :hand, :deck, :turn, :tr
     @buildings = []
     @wonders = []
     @emblems = []
-    @units = [Unit.new(:warrior)]
+    @units = [Unit.new(:warrior),Unit.new(:archer)]
     @invasion_bonus = BONUSDATA
     @coin = 100
     @threat = 1

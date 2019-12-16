@@ -82,16 +82,20 @@ module Click
   def click_unit(pos)
     if @click_mode == :delete_unit
       if @delete_unit == pos
-        unit = @units.delete_at[pos]
-        add_log("")
-      else
-        @click_mode = nil
-        @delete_unit = nil
-      end
+        unit = @units.delete_at(pos)
+        add_log(unit.name+"を解散させた")
+      end        
+      @click_mode = nil
+      @delete_unit = nil
     else
       @click_mode = :delete_unit
       @delete_unit = pos
     end
+  end
+
+  def cancel_delete_unit
+    @click_mode = nil
+    @delete_unit = nil
   end
 
   def click_bonus(pos)

@@ -45,6 +45,13 @@ class Controller
       return unless pos_hand
       @game.click_hand(pos_hand)
       return
+    when :delete_unit
+      if pos_unit
+        @game.click_unit(pos_unit)
+      else
+        @game.cancel_delete_unit
+      end
+      return
     end
   
     if @game.view_status == :main_view

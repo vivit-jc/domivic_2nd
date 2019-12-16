@@ -376,7 +376,7 @@
 				"def":10,
 				"utype":"soldier"
 			},
-			"canon":{
+			"cannon":{
 				"name":"カノン砲",
 				"cost":10,
 				"att":10,

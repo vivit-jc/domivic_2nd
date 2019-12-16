@@ -127,7 +127,8 @@ class View
       y = UNITS_Y+65*(i/5).floor
       Window.draw(x,y,@unitback)
       Window.draw(x+2,y+2,Image[unit.kind.to_sym])
-      Window.draw_font(x+2,y+38,"#{unit.att}/#{unit.def}",Font16)
+      str = i == @game.delete_unit ? "削除？" : "#{unit.att}/#{unit.def}"
+      Window.draw_font(x+2,y+38,str,Font16)
     end
   end
 
