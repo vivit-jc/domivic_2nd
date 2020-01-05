@@ -26,7 +26,7 @@
 		},
 		"monarchy":{
 			"finish_card":[["authority",1]],
-			"unlock_card":[["invasion",0]]
+			"effect":"侵攻の生産コスト-20%"
 		},
 		"mathematics":{
 			"finish_card":[["science",3]],
@@ -60,7 +60,7 @@
 		"chivalry":{
 			"finish_card":[["trend",5]],
 			"unlock_unit":["knight"],
-			"unlock_card":[["invasion",0]]
+			"effect":"侵攻の生産コスト-20%"
 		},
 		"education":{
 			"finish_card":[["science",1],["science",2],["science",3]],
@@ -91,7 +91,8 @@
 		},
 		"nationalism":{
 			"finish_card":[["authority",2]],
-			"unlock_card":[["politics",0]]
+			"unlock_card":[["politics",0]],
+			"effect":"侵攻の生産コスト-30%"
 		},
 		"banking":{
 			"finish_card":[["tax_collection",2]],
@@ -105,35 +106,35 @@
 
 		},
 		"scientific_method":{
-			"finish_card":["science",10],
-			"unlock_card":["science",10]
+			"finish_card":[["science",10]],
+			"unlock_card":[["science",10]]
 		},
 		"steam_power":{
-			"unlock_card":["production",10],
+			"unlock_card":[["production",10]],
 			"unlock_bldg":["railroad"]
 		},
 		"steel":{
-			"unlock_unit":["canon"]
+			"unlock_unit":["cannon"]
 		},
 		"biology":{
 			"effect":"成長ptを追加で1ターン保持する　兵士ユニットの待機上限+1"
 		},
 		"corporation":{
-			"finish_card":["trade",4]
+			"finish_card":[["trade",4]]
 		},
 		"assembly_line":{
 			"unlock_unit":["infantry"]
 		},
 		"electricity":{
-			"finish_card":["production",10],
-			"unlock_card":["growth",10]
+			"finish_card":[["production",10]],
+			"unlock_card":[["growth",10]]
 		},
 		"computers":{
-			"finish_card":["science",15],
-			"unlock_card":["science",15]
+			"finish_card":[["science",15]],
+			"unlock_card":[["science",15]]
 		},
 		"flight":{
-			"unlock_unit":["aricraft"]
+			"unlock_unit":["aircraft"]
 		},
 		"fission":{
 			"effect":"《守護》を10個得る"
@@ -145,7 +146,7 @@
 			"finish_card":[["trend",10],["trend",10],["trend",10]]
 		},
 		"plastics":{
-			"finish_card":["production",10],
+			"finish_card":[["production",10]],
 			"effect":"成長Lv上昇に必要な成長pt-25"
 		}
 	},
@@ -154,12 +155,14 @@
 			"granary":{
 				"cost":	12,
 				"name": "穀物庫",
-				"text": "成長ptを追加で1ターン保持する"
+				"text": "成長ptを追加で1ターン保持する",
+				"effect" "keep_growth_point,1"
 			},
 			"library":{
 				"cost": 12,
 				"name": "図書館",
-				"text": "毎ターン、手札の研究カード1枚につき研究+1"
+				"text": "毎ターン、手札の研究カード1枚につき研究+1",
+				"effect": "bonus_point(:science,count_card_in_hand(:science))"
 			},
 			"barracks":{
 				"cost": 12,
@@ -170,22 +173,26 @@
 			"shrine":{
 				"cost": 12,
 				"name": "神殿",
-				"text": "カードが1枚除外されるたびに文化+3"
+				"text": "カードが1枚除外されるたびに文化+3",
+				"effect": "when_remove(add_point(:culture,3))"
 			},
 			"workshop":{
 				"cost": 12,
 				"name": "工房",
-				"text": "すべてのユニットのコスト-15%"
+				"text": "すべてのユニットのコスト-15%",
+				"effect": "down_cost,[:unit],15"
 			},
 			"trading_post":{
 				"cost": 12,
 				"name": "交易所",
-				"text": "コインを得るたびにコイン+1"
+				"text": "コインを得る時、そのコインを+1する",
+				"text": "when_get_coin(add_point(:coin,1))"
 			},
 			"temple":{
 				"cost": 12,
 				"name": "寺院",
-				"text": "毎ターン、文化+2"
+				"text": "毎ターン、文化+2",
+				"effext": "bonus_point(:culture,2)"
 			},
 			"stable":{
 				"cost": 12,
@@ -196,22 +203,27 @@
 			"aqueduct":{
 				"cost": 12,
 				"name": "水道橋",
-				"text": "成長Lv上昇に必要な成長pt-25%"
+				"text": "成長Lv上昇に必要な成長pt-25%",
+				"effect": "down_growth_cost,25"
 			},
 			"forge":{
 				"cost": 12,
 				"name": "溶鉱炉",
-				"text": "すべての建物、世界遺産、カード、ユニットのコスト-10%"
+				"text": "すべての建物、世界遺産、カード、ユニットのコスト-10%",
+				"effect": "down_cost,[:bldg,:wonder,:card,:unit],10"
 			},
 			"market":{
 				"cost": 12,
 				"name": "市場",
-				"text": "アクションカードが使われるたびにコイン+1"
+				"text": "アクションカードが使われるたびにコイン+1",
+				"effect": "when_use_action(add_coin(1))"
 			},
 			"university":{
 				"cost": 12,
 				"name": "大学",
-				"text": "毎ターン、手札の研究カード1枚につき研究+2、文化+1"
+				"text": "毎ターン、手札の研究カード1枚につき研究+2、文化+1",
+				"effect": ["bonus_point(:science,count_card_in_hand(:science)*2)",
+					"bonus_point(:culture,count_card_in_hand(:science))"]
 			},
 			"bank":{
 				"cost": 12,
@@ -222,6 +234,11 @@
 				"cost": 12,
 				"name": "士官学校",
 				"text": "考え中"			
+			},
+			"railroad":{
+				"cost": 12,
+				"name": "鉄道",
+				"text": "考え中"
 			},
 			"broadcast_tower":{
 				"cost": 12,
@@ -264,14 +281,14 @@
 			},
 			"trade":{
 				"name":"交易",
-				"cost":[5,10,15,20],
+				"cost":[5,10,15,20,20],
 				"text":"アクション: 数字の枚数追加で引き、その半数(切り上げ)に等しいコインを支払う",
 				"action":true
 			},
 			"invasion":{
 				"name":"侵攻",
 				"cost":[5,10,15,20],
-				"text":"アクション: 侵攻を行う",
+				"text":"アクション: 侵攻を行う。生産するたびに生産コストが2倍になる。",
 				"action":true
 			},
 			"politics":{
@@ -383,7 +400,7 @@
 				"def":10,
 				"utype":"siege"				
 			},
-			"aricraft":{
+			"aircraft":{
 				"name":"戦闘機",
 				"cost":10,
 				"att":10,
