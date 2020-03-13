@@ -147,7 +147,7 @@
 		},
 		"plastics":{
 			"finish_card":[["production",10]],
-			"effect":"成長Lv上昇に必要な成長pt-25"
+			"effect":"成長Lv上昇に必要な成長pt-25%"
 		}
 	},
 	"product":{
@@ -156,7 +156,7 @@
 				"cost":	12,
 				"name": "穀物庫",
 				"text": "成長ptを追加で1ターン保持する",
-				"effect" "keep_growth_point,1"
+				"effect": "keep_growth_point,1"
 			},
 			"library":{
 				"cost": 12,
@@ -185,8 +185,8 @@
 			"trading_post":{
 				"cost": 12,
 				"name": "交易所",
-				"text": "コインを得る時、そのコインを+1する",
-				"text": "when_get_coin(add_point(:coin,1))"
+				"text": "カードが1枚除外されるたびにコイン+1",
+				"text": "when_remove(add_coin(1))"
 			},
 			"temple":{
 				"cost": 12,
